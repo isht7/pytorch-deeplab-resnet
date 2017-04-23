@@ -123,7 +123,7 @@ def parse_pth_varnames(p, pth_varname, num_layers):
 
     post = ''
     MultiScale = int(pth_varname[5])
-    EXP = '${EXP}'
+    EXP = 'voc12'
     if MultiScale == 1:
         post =  ''
     elif MultiScale == 2:
@@ -279,7 +279,7 @@ def convert(img, img_p, layers):
     for a in output:
 	print 	a.data.numpy().shape
 
-    torch.save(model.state_dict(),'MS_DeepLab_resnet_tained_VOC.pth')
+    torch.save(model.state_dict(),'MS_DeepLab_resnet_trained_VOC.pth')
 
 
 def main():
