@@ -2,7 +2,7 @@ import torch.nn as nn
 import math
 import torch.utils.model_zoo as model_zoo
 import torch
-
+import numpy as np
 affine_par = True
 def conv3x3(in_planes, out_planes, stride=1):
     "3x3 convolution with padding"
@@ -180,13 +180,12 @@ class MS_Deeplab(nn.Module):
 	self.Scale1 = ResNet(block,[3, 4, 23, 3])   # for original scale
 	self.Scale2 = ResNet(block,[3, 4, 23, 3])   # for 0.75x scale
 	self.Scale3 = ResNet(block,[3, 4, 23, 3])   # for 0.5x scale
-	self.interp1 = nn.UpsamplingBilinear2d(size = (241,241))
-        self.interp2 = nn.UpsamplingBilinear2d(size = (161,161))
-        self.interp3 = nn.UpsamplingBilinear2d(size = (41,41))
-        self.interp4 = nn.UpsamplingBilinear2d(size = (41,41))
 
     def forward(self,x):
-
+        input_size = x.size()[2]
+	self.interp1 = nn.UpsamplingBilinear2d(size = (  int(np.ceil(input_size*0.75)),  int(np.ceil(input_size*0.75))  ))
+        self.interp2 = nn.UpsamplingBilinear2d(size = (  int(np.ceil(input_size*0.5)),   int(np.ceil(input_size*0.5))   ))
+        self.interp3 = nn.UpsamplingBilinear2d(size = (  int(np.ceil(input_size/8.0)),   int(np.ceil(input_size/8.0))   ))
         out = []
         x2 = self.interp1(x)
         x3 = self.interp2(x)
@@ -196,7 +195,7 @@ class MS_Deeplab(nn.Module):
 
 
         x2Out_interp = out[1]
-        x3Out_interp = self.interp4(out[2])
+        x3Out_interp = self.interp3(out[2])
         temp1 = torch.max(out[0],x2Out_interp)
         out.append(torch.max(temp1,x3Out_interp))
 	return out
