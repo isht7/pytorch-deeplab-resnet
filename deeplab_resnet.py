@@ -4,6 +4,14 @@ import torch.utils.model_zoo as model_zoo
 import torch
 import numpy as np
 affine_par = True
+
+
+def outS(i):
+    i = int(i)
+    i = (i+1)/2
+    i = int(np.ceil((i+1)/2.0))
+    i = (i+1)/2
+    return i
 def conv3x3(in_planes, out_planes, stride=1):
     "3x3 convolution with padding"
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
@@ -165,7 +173,6 @@ class ResNet(nn.Module):
         x = self.bn1(x)
         x = self.relu(x)
         x = self.maxpool(x)
-
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
@@ -183,9 +190,9 @@ class MS_Deeplab(nn.Module):
 
     def forward(self,x):
         input_size = x.size()[2]
-	self.interp1 = nn.UpsamplingBilinear2d(size = (  int(np.ceil(input_size*0.75)),  int(np.ceil(input_size*0.75))  ))
-        self.interp2 = nn.UpsamplingBilinear2d(size = (  int(np.ceil(input_size*0.5)),   int(np.ceil(input_size*0.5))   ))
-        self.interp3 = nn.UpsamplingBilinear2d(size = (  int(np.ceil(input_size/8.0)),   int(np.ceil(input_size/8.0))   ))
+	self.interp1 = nn.UpsamplingBilinear2d(size = (  int(input_size*0.75),  int(input_size*0.75)  ))
+        self.interp2 = nn.UpsamplingBilinear2d(size = (  int(input_size*0.5),   int(input_size*0.5)   ))
+        self.interp3 = nn.UpsamplingBilinear2d(size = (  outS(input_size),   outS(input_size)   ))
         out = []
         x2 = self.interp1(x)
         x3 = self.interp2(x)
