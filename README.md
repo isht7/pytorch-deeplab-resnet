@@ -3,14 +3,14 @@ DeepLab resnet model in pytorch
 
 # Usage
 ### Replicating caffe performance
-The repository contains model definition of deeplab-resnet in pytorch. To use this code, download the deeplab-resnet caffemodel (train\_iter\_20000.caffemodel) pretrained on VOC into the data folder. After that, run
+The repository contains model definition of deeplab-resnet in pytorch. To use this code, download the deeplab-resnet caffemodel (`train\_iter\_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
 ```
 python convert_deeplab_resnet.py
 ```
 to generate the pytorch model file(.pth)
 ### Training 
-Step 1: Convert init.caffemodel to a .pth file. init.caffemodel contains MSCOCO trained weights. We use these weights as initilization for all but the final layer of our model. For the last layer, we use random gaussian with a standard deviation of 0.01
-To convert init.caffemodel to a .pth file, run
+Step 1: Convert `init.caffemodel` to a .pth file, 'init.caffemodel' contains MSCOCO trained weights. We use these weights as initilization for all but the final layer of our model. For the last layer, we use random gaussian with a standard deviation of 0.01
+To convert `init.caffemodel` to a .pth file, run
 ```
 python init_net_surgery.py
 ```
@@ -27,5 +27,7 @@ Evaluation of the saved models can be done by running
 ```
 python evalpyt_513.py
 ```
+### Results
+When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation accuray of 78.49%(validation set has 1449 images)
 ## Acknowledgement
 A part of the code has been borrowed from [https://github.com/ry/tensorflow-resnet](https://github.com/ry/tensorflow-resnet)
