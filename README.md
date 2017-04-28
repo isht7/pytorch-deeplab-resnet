@@ -1,13 +1,14 @@
 # pytorch-deeplab-resnet
-[DeepLab resnet](https://arxiv.org/abs/1606.00915) model in pytorch
-* The architecture of deepLab-ResNet has been replicated exactly as it is from the caffe implementation.
+[DeepLab resnet](https://arxiv.org/abs/1606.00915) model implementation in pytorch
+The architecture of deepLab-ResNet has been replicated exactly as it is from the caffe implementation.
 # Usage
 ### Replicating caffe performance
-The repository is an implementation of deeplab-resnet in pytorch. To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
+To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
 ```
 python convert_deeplab_resnet.py
 ```
-to generate the corresponding pytorch model file (.pth). If you want to train your model in pytorch, move to the next section.
+to generate the corresponding pytorch model file (.pth). The generated .pth snapshot file can be used to get the same test performace as offered by using the caffemodel in caffe.
+If you want to train your model in pytorch, move to the next section.
 ### Training 
 Step 1: Convert `init.caffemodel` to a .pth file: `init.caffemodel` contains MS COCO trained weights. We use these weights as initilization for all but the final layer of our model. For the last layer, we use random gaussian with a standard deviation of 0.01 as the initialization.
 To convert `init.caffemodel` to a .pth file, run
