@@ -1,5 +1,5 @@
 # pytorch-deeplab-resnet
-[https://arxiv.org/abs/1606.00915](DeepLab resnet) model in pytorch
+[DeepLab resnet](https://arxiv.org/abs/1606.00915) model in pytorch
 * The architecture of deepLab-ResNet has been replicated exactly as it is from the caffe implementation.
 # Usage
 ### Replicating caffe performance
