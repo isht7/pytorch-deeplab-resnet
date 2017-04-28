@@ -3,7 +3,7 @@
 * The architecture of deepLab-ResNet has been replicated exactly as it is from the caffe implementation.
 # Usage
 ### Replicating caffe performance
-The repository is an implementation of deeplab-resnet in pytorch. To convert the caffemodel released by [https://arxiv.org/abs/1606.00915](authors), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
+The repository is an implementation of deeplab-resnet in pytorch. To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
 ```
 python convert_deeplab_resnet.py
 ```
@@ -30,6 +30,6 @@ Evaluation of the saved models can be done by running
 python evalpyt.py
 ```
 ### Results
-When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation accuray of 78.49% (validation set has 1449 images, [https://arxiv.org/abs/1606.00915](authors) report validation performance of 77.69% with their caffe implementation)
+When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation accuray of 78.49% (validation set has 1449 images, [authors](https://arxiv.org/abs/1606.00915) report validation performance of 77.69% with their caffe implementation)
 ## Acknowledgement
 A part of the code has been borrowed from [https://github.com/ry/tensorflow-resnet](https://github.com/ry/tensorflow-resnet)
