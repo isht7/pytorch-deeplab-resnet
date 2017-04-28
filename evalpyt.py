@@ -74,7 +74,7 @@ snapPrefix = args['--snapPrefix']
 gt_path = args['--testGTpath']
 img_list = open('data/list/val.txt').readlines()
 
-for iter in range(1,20):   #TODO set the (different iteration)models that you want to evaluate on. Models are saved during training after each 1000 iters by default.
+for iter in range(1,21):   #TODO set the (different iteration)models that you want to evaluate on. Models are saved during training after each 1000 iters by default.
     saved_state_dict = torch.load(os.path.join('data/snapshots/',snapPrefix+str(iter)+'000.pth'))
     if counter==0:
 	print snapPrefix
