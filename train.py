@@ -9,6 +9,7 @@ import torch.optim as optim
 import scipy.misc
 import torch.backends.cudnn as cudnn
 import sys
+import os
 import matplotlib.pyplot as plt
 from tqdm import *
 import random
@@ -21,7 +22,6 @@ Usage:
 
 Options:
     -h, --help                  Print this message
-    --segnetLoss                Weigh each class differently
     --GTpath=<str>              Ground truth path prefix [default: data/gt/]
     --IMpath=<str>              Sketch images path prefix [default: data/img/]
     --LISTpath=<str>            Input image number list file [default: data/list/train_aug.txt]
@@ -41,31 +41,13 @@ gpu0 = int(args['--gpu0'])
 
 
 def outS(i):
-    i = int(i)
-    i = (i+1)/2
-    i = int(np.ceil((i+1)/2.0))
-    i = (i+1)/2
-    return i
-
-def find_med_frequency(img_list,max_):
-    gt_path = args['--GTpath'] 
-    dict_store = {}
-    for i in range(max_):
-        dict_store[i] = []
-    for i,piece in tqdm(enumerate(img_list)):
-        gt = cv2.imread(gt_path+piece+'.png')[:,:,0]
-        gt[gt==255] = 0
-        for i in range(21):
-            dict_store[i].append(np.count_nonzero(gt == i))
-    global_stats_median = np.zeros((21,))
-    global_stats_sum = np.zeros((21,))
-    global_stats_presence = np.zeros((21,))
-    for i in range(21):
-        global_stats_median[i] = np.median(dict_store[i])
-        global_stats_sum[i] = np.sum(dict_store[i])
-        global_stats_presence[i] = np.count_nonzero(dict_store[i]) #changed to new 
-    return global_stats_median,global_stats_sum,global_stats_presence
-
+    """Given shape of input image as i,i,3 in deeplab-resnet model, this function
+    returns j such that the shape of output blob of is j,j,21 """
+    j = int(i)
+    j = (j+1)/2
+    j = int(np.ceil((j+1)/2.0))
+    j = (j+1)/2
+    return j
 
 def read_file(path_to_file):
     with open(path_to_file) as f:
@@ -110,7 +92,7 @@ def get_data_from_chunk_v2(chunk):
     for i,piece in enumerate(chunk):
         flip_p = random.uniform(0, 1)
         print img_path+piece+'.jpg'
-        img_temp = cv2.imread(img_path+piece+'.jpg').astype(float)
+        img_temp = cv2.imread(os.path.join(img_path,piece+'.jpg')).astype(float)
         img_temp = cv2.resize(img_temp,(321,321)).astype(float)
         img_temp = scale_im(img_temp,scale)
         img_temp[:,:,0] = img_temp[:,:,0] - 104.008
@@ -119,7 +101,7 @@ def get_data_from_chunk_v2(chunk):
         img_temp = flip(img_temp,flip_p)
         images[:,:,:,i] = img_temp
 
-        gt_temp = cv2.imread(gt_path+piece+'.png')[:,:,0]
+        gt_temp = cv2.imread(os.path.join(gt_path,piece+'.png'))[:,:,0]
         gt_temp[gt_temp == 255] = 0
         gt_temp = cv2.resize(gt_temp,(321,321) , interpolation = cv2.INTER_NEAREST)
         gt_temp = scale_gt(gt_temp,scale)
@@ -135,6 +117,9 @@ def get_data_from_chunk_v2(chunk):
 
 
 def loss_calc(out, label,gpu0):
+    """
+    This function returns cross entropy loss for semantic segmentation
+    """
     # out shape batch_size x channels x h x w -> batch_size x channels x h x w
     # label shape h x w x 1 x batch_size  -> batch_size x 1 x h x w
     label = label[:,:,0,:].transpose(2,0,1)
@@ -147,28 +132,17 @@ def loss_calc(out, label,gpu0):
     return criterion(out,label)
 
 
-
-def loss_calc_seg(out, label,gpu0,seg_weights):
-    # out shape batch_size x channels x h x w -> batch_size x channels x h x w
-    # label shape h x w x 1 x batch_size  -> batch_size x 1 x h x w
-    label = label[:,:,0,:].transpose(2,0,1)
-    label = torch.from_numpy(label).long()
-    label = Variable(label).cuda(gpu0)
-    m = nn.LogSoftmax()
-    criterion = nn.NLLLoss2d(torch.from_numpy(seg_weights).float().cuda(gpu0))
-    out = m(out)
-    
-    return criterion(out,label)
-
-
-
-
-
 def lr_poly(base_lr, iter,max_iter,power):
     return base_lr*((1-float(iter)/max_iter)**(power))
 
 
 def get_1x_lr_params_NOscale(model):
+    """
+    This generator returns all the parameters of the net except for 
+    the last classification layer. Note that for each batchnorm layer, 
+    requires_grad is set to False in deeplab_resnet.py, therefore this function does not return 
+    any batchnorm parameter
+    """
     b = []
 
     b.append(model.Scale1.conv1)
@@ -201,6 +175,11 @@ def get_1x_lr_params_NOscale(model):
                     yield k
 
 def get_10x_lr_params(model):
+    """
+    This generator returns all the parameters for the last layer of the net,
+    which does the classification of pixel into classes
+    """
+
     b = []
     b.append(model.Scale1.layer5.parameters())
     b.append(model.Scale2.layer5.parameters())
@@ -227,10 +206,6 @@ model.float()
 model.eval()
 
 img_list = read_file(args['--LISTpath'])
-#global_stats_median,global_stats_sum,global_stats_presence = find_med_frequency(img_list,21)
-#freq_c = global_stats_sum/global_stats_presence
-#seg_weights = np.median(freq_c)/freq_c
-#print seg_weights
 
 data_list = []
 for i in range(10):  # make list for 10 epocs, though we will only use the first max_iter*batch_size entries of this list
