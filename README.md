@@ -22,7 +22,7 @@ By default, snapshots are saved in every 1000 iterations.
 The following features have been implemented in this repository -
 * The iter\_size parameter of caffe has been implemented, effectively increasing the batch\_size to batch\_size times iter\_size
 * Random flipping and random scaling of input has been used as data augmentation
-###Evaluation
+### Evaluation
 Evaluation of the saved models can be done by running
 ```
 python evalpyt_513.py
