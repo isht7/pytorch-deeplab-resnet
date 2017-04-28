@@ -12,8 +12,33 @@ import sys
 import matplotlib.pyplot as plt
 from tqdm import *
 import random
+from docopt import docopt
+
+docstr = """Train ResNet-DeepLab on VOC12 (scenes) in pytorch using MSCOCO pretrained initialization 
+
+Usage: 
+    train.py [options]
+
+Options:
+    -h, --help                  Print this message
+    --segnetLoss                Weigh each class differently
+    --GTpath=<str>              Ground truth path prefix [default: data/gt/]
+    --IMpath=<str>              Sketch images path prefix [default: data/img/]
+    --LISTpath=<str>            Input image number list file [default: data/list/train_aug.txt]
+    --lr=<float>                Learning Rate [default: 0.00025]
+    -i, --iterSize=<int>        Num iters to accumulate gradients over [default: 10]
+    --wtDecay=<float>          Weight decay during training [default: 0.0005]
+    --gpu0=<int>                GPU number [default: 0]
+    --maxIter=<int>             Maximum number of iterations [default: 20000]
+"""
+
+#    -b, --batchSize=<int>       num sample per batch [default: 1] currently only batch size of 1 is implemented, arbitrary batch size to be implemented soon
+args = docopt(docstr, version='v0.1')
+print(args)
+
 cudnn.enabled = False
-gpu0 = 0 
+gpu0 = int(args['--gpu0'])
+
 
 def outS(i):
     i = int(i)
@@ -23,15 +48,13 @@ def outS(i):
     return i
 
 def find_med_frequency(img_list,max_):
-    gt_path = '/data1/ravikiran/pytorch-deeplab-resnet/data/gt/'
+    gt_path = args['--GTpath'] 
     dict_store = {}
     for i in range(max_):
         dict_store[i] = []
     for i,piece in tqdm(enumerate(img_list)):
         gt = cv2.imread(gt_path+piece+'.png')[:,:,0]
         gt[gt==255] = 0
-        #unique, counts = np.unique(gt,return_counts=True)
-        #dict_c = dict(zip(unique,counts))
         for i in range(21):
             dict_store[i].append(np.count_nonzero(gt == i))
     global_stats_median = np.zeros((21,))
@@ -77,14 +100,16 @@ def scale_gt(img_temp,scale):
     return cv2.resize(img_temp,new_dims,interpolation = cv2.INTER_NEAREST).astype(float)
    
 def get_data_from_chunk_v2(chunk):
-    gt_path = '/data1/ravikiran/pytorch-deeplab-resnet/data/gt/'
-    img_path = '/data1/ravikiran/pytorch-deeplab-resnet/data/img/'
+    gt_path =  args['--GTpath']
+    img_path = args['--IMpath']
+
     scale = random.uniform(0.5, 1.3)
     dim = int(scale*321)
     images = np.zeros((dim,dim,3,len(chunk)))
     gt = np.zeros((dim,dim,1,len(chunk)))
     for i,piece in enumerate(chunk):
         flip_p = random.uniform(0, 1)
+        print img_path+piece+'.jpg'
         img_temp = cv2.imread(img_path+piece+'.jpg').astype(float)
         img_temp = cv2.resize(img_temp,(321,321)).astype(float)
         img_temp = scale_im(img_temp,scale)
@@ -103,21 +128,15 @@ def get_data_from_chunk_v2(chunk):
         a = outS(321*scale)#41
         b = outS(321*0.5*scale)#21
     labels = [resize_label_batch(gt,i) for i in [a,a,b,a]]
-#    gt = gt.transpose((3,2,0,1))
-#   image shape H,W,3,batch -> batch,3,H,W
     images = images.transpose((3,2,0,1))
-#    gt.cuda(gpu0)
     images = torch.from_numpy(images).float()
-#    images.cuda(gpu0)
     return images, labels
 
 
 
-def loss_calc(criterion, out, label,gpu0):
+def loss_calc(out, label,gpu0):
     # out shape batch_size x channels x h x w -> batch_size x channels x h x w
     # label shape h x w x 1 x batch_size  -> batch_size x 1 x h x w
-    #plt.imshow(label[:,:,0,0])
-    #plt.show()
     label = label[:,:,0,:].transpose(2,0,1)
     label = torch.from_numpy(label).long()
     label = Variable(label).cuda(gpu0)
@@ -129,11 +148,9 @@ def loss_calc(criterion, out, label,gpu0):
 
 
 
-def loss_calc_seg(criterion, out, label,gpu0,seg_weights):
+def loss_calc_seg(out, label,gpu0,seg_weights):
     # out shape batch_size x channels x h x w -> batch_size x channels x h x w
     # label shape h x w x 1 x batch_size  -> batch_size x 1 x h x w
-    #plt.imshow(label[:,:,0,0])
-    #plt.show()
     label = label[:,:,0,:].transpose(2,0,1)
     label = torch.from_numpy(label).long()
     label = Variable(label).cuda(gpu0)
@@ -150,53 +167,8 @@ def loss_calc_seg(criterion, out, label,gpu0,seg_weights):
 def lr_poly(base_lr, iter,max_iter,power):
     return base_lr*((1-float(iter)/max_iter)**(power))
 
-def get_1x_lr_params(model):
-#    all_params = model.parameters()
-#    b = []
-#    b.append(model.Scale1.layer5.parameters())
-#    b.append(model.Scale2.layer5.parameters())
-#    b.append(model.Scale3.layer5.parameters())
-
-#    for i in all_params:
-#        if (i not in b[0]) and (i not in b[1]) and (i not in b[2]):
-#            yield i
-    b = []
-
-    b.append(model.Scale1.conv1.parameters())
-    b.append(model.Scale1.bn1.parameters())
-    b.append(model.Scale1.layer1.parameters())
-    b.append(model.Scale1.layer2.parameters())
-    b.append(model.Scale1.layer3.parameters())
-    b.append(model.Scale1.layer4.parameters())
-
-    b.append(model.Scale2.conv1.parameters())
-    b.append(model.Scale2.bn1.parameters())
-    b.append(model.Scale2.layer1.parameters())
-    b.append(model.Scale2.layer2.parameters())
-    b.append(model.Scale2.layer3.parameters())
-    b.append(model.Scale2.layer4.parameters())
-
-    b.append(model.Scale3.conv1.parameters())
-    b.append(model.Scale3.bn1.parameters())
-    b.append(model.Scale3.layer1.parameters())
-    b.append(model.Scale3.layer2.parameters())
-    b.append(model.Scale3.layer3.parameters())
-    b.append(model.Scale3.layer4.parameters())
-
-    for i in range(len(b)):
-        for j in b[i]:
-            yield j
 
 def get_1x_lr_params_NOscale(model):
-#    all_params = model.parameters()
-#    b = []
-#    b.append(model.Scale1.layer5.parameters())
-#    b.append(model.Scale2.layer5.parameters())
-#    b.append(model.Scale3.layer5.parameters())
-
-#    for i in all_params:
-#        if (i not in b[0]) and (i not in b[1]) and (i not in b[2]):
-#            yield i
     b = []
 
     b.append(model.Scale1.conv1)
@@ -223,13 +195,10 @@ def get_1x_lr_params_NOscale(model):
     for i in range(len(b)):
         for j in b[i].modules():
             jj = 0
-            #print j
             for k in j.parameters():
                 jj+=1
-                #print type(k), k.requires_grad,'completed_round 1'
                 if k.requires_grad:
                     yield k
-            #print jj
 
 def get_10x_lr_params(model):
     b = []
@@ -248,42 +217,43 @@ model = getattr(deeplab_resnet,'Res_Deeplab')()
 saved_state_dict = torch.load('MS_DeepLab_resnet_pretrained_COCO_init.pth')
 model.load_state_dict(saved_state_dict)
 
-max_iter = 20000
+max_iter = int(args['--maxIter']) 
 batch_size = 1
-train_epocs = 10
+weight_decay = float(args['--wtDecay'])
+base_lr = float(args['--lr'])
+
 model.float()
 model.eval()
 
-img_list = read_file('/data1/ravikiran/pytorch-deeplab-resnet/data/list/train_aug.txt')
+img_list = read_file(args['--LISTpath'])
 #global_stats_median,global_stats_sum,global_stats_presence = find_med_frequency(img_list,21)
 #freq_c = global_stats_sum/global_stats_presence
 #seg_weights = np.median(freq_c)/freq_c
 #print seg_weights
 
 data_list = []
-for i in range(train_epocs):
+for i in range(10):  # make list for 10 epocs, though we will only use the first max_iter*batch_size entries of this list
     np.random.shuffle(img_list)
     data_list.extend(img_list)
 
 model.cuda(gpu0)
 criterion = nn.CrossEntropyLoss() # use a Classification Cross-Entropy loss
-#optimizer = optim.SGD(model.parameters(), lr=0.00025, momentum=0.9)
-optimizer = optim.SGD([{'params': get_1x_lr_params_NOscale(model), 'lr': 0.00025 }, {'params': get_10x_lr_params(model), 'lr': 0.0025} ], lr = 0.00025, momentum = 0.9,weight_decay = 0.0005)
-#optimizer = optim.SGD([{'params': get_10x_lr_params(model), 'lr': 0.00025 }], lr = 0.00025, momentum = 0.9)
+optimizer = optim.SGD([{'params': get_1x_lr_params_NOscale(model), 'lr': base_lr }, {'params': get_10x_lr_params(model), 'lr': 10*base_lr} ], lr = base_lr, momentum = 0.9,weight_decay = weight_decay)
 
 optimizer.zero_grad()
+data_gen = chunker(data_list, batch_size)
 
-for iter,chunk in enumerate(chunker(data_list, batch_size)):
+for iter in range(max_iter+1):
+    chunk = data_gen.next()
+
     images, label = get_data_from_chunk_v2(chunk)
-
     images = Variable(images).cuda(gpu0)
 
-
     out = model(images)
-    loss = loss_calc(criterion, out[0], label[0],gpu0)
-    iter_size = 10
+    loss = loss_calc(out[0], label[0],gpu0)
+    iter_size = int(args['--iterSize']) 
     for i in range(len(out)-1):
-        loss = loss + loss_calc(criterion, out[i+1],label[i+1],gpu0)
+        loss = loss + loss_calc(out[i+1],label[i+1],gpu0)
     loss = loss/iter_size 
     loss.backward()
 
@@ -292,17 +262,13 @@ for iter,chunk in enumerate(chunker(data_list, batch_size)):
 
     if iter % iter_size  == 0:
         optimizer.step()
-        lr_ = lr_poly(0.00025,iter,max_iter,0.9)
+        lr_ = lr_poly(base_lr,iter,max_iter,0.9)
         print '(poly lr policy) learning rate',lr_
-#       optimizer = optim.SGD(model.parameters(),lr = updated_lr,  momentum = 0.9)
-        optimizer = optim.SGD([{'params': get_1x_lr_params_NOscale(model), 'lr': lr_ }, {'params': get_10x_lr_params(model), 'lr': 10*lr_} ], lr = lr_, momentum = 0.9,weight_decay = 0.0005)
+        optimizer = optim.SGD([{'params': get_1x_lr_params_NOscale(model), 'lr': lr_ }, {'params': get_10x_lr_params(model), 'lr': 10*lr_} ], lr = lr_, momentum = 0.9,weight_decay = weight_decay)
         optimizer.zero_grad()
 
     if iter % 1000 == 0 and iter!=0:
         print 'taking snapshot ...'
-        torch.save(model.state_dict(),'snapshots/r0_scenes_A4_'+str(iter)+'.pth')
-    if iter ==max_iter:
-        break
+        torch.save(model.state_dict(),'snapshots/VOC12_scenes_'+str(iter)+'.pth')
 
 
-execfile('evalpyt_513.py')
