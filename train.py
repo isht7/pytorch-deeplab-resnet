@@ -210,7 +210,8 @@ def get_10x_lr_params(model):
         for i in b[j]:
             yield i
 
-
+if not os.path.exists('data/snapshots'):
+    os.makedirs('data/snapshots')
 
 
 model = getattr(deeplab_resnet,'Res_Deeplab')()
@@ -269,6 +270,6 @@ for iter in range(max_iter+1):
 
     if iter % 1000 == 0 and iter!=0:
         print 'taking snapshot ...'
-        torch.save(model.state_dict(),'snapshots/VOC12_scenes_'+str(iter)+'.pth')
+        torch.save(model.state_dict(),'data/snapshots/VOC12_scenes_'+str(iter)+'.pth')
 
 
