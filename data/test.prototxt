@@ -21463,15 +21463,15 @@ layer {
 
 ############################### classifiers ##########################
 layer {
-  name: "fc1_${EXP}_c0"
+  name: "fc1_voc12_c0"
   type: "Convolution"
   bottom: "res5c"
-  top: "fc1_${EXP}_c0"
+  top: "fc1_voc12_c0"
   param {
-    name: "fc1_${EXP}_c0_w"
+    name: "fc1_voc12_c0_w"
   }
   param {
-    name: "fc1_${EXP}_c0_b"
+    name: "fc1_voc12_c0_b"
   }
   convolution_param {
     num_output: 21
@@ -21482,15 +21482,15 @@ layer {
 }
 
 layer {
-  name: "fc1_${EXP}_c1"
+  name: "fc1_voc12_c1"
   type: "Convolution"
   bottom: "res5c"
-  top: "fc1_${EXP}_c1"
+  top: "fc1_voc12_c1"
   param {
-    name: "fc1_${EXP}_c1_w"
+    name: "fc1_voc12_c1_w"
   }
   param {
-    name: "fc1_${EXP}_c1_b"
+    name: "fc1_voc12_c1_b"
   }
   convolution_param {
     num_output: 21
@@ -21501,15 +21501,15 @@ layer {
 }
 
 layer {
-  name: "fc1_${EXP}_c2"
+  name: "fc1_voc12_c2"
   type: "Convolution"
   bottom: "res5c"
-  top: "fc1_${EXP}_c2"
+  top: "fc1_voc12_c2"
   param {
-    name: "fc1_${EXP}_c2_w"
+    name: "fc1_voc12_c2_w"
   }
   param {
-    name: "fc1_${EXP}_c2_b"
+    name: "fc1_voc12_c2_b"
   }
   convolution_param {
     num_output: 21
@@ -21520,15 +21520,15 @@ layer {
 }
 
 layer {
-  name: "fc1_${EXP}_c3"
+  name: "fc1_voc12_c3"
   type: "Convolution"
   bottom: "res5c"
-  top: "fc1_${EXP}_c3"
+  top: "fc1_voc12_c3"
   param {
-    name: "fc1_${EXP}_c3_w"
+    name: "fc1_voc12_c3_w"
   }
   param {
-    name: "fc1_${EXP}_c3_b"
+    name: "fc1_voc12_c3_b"
   }
   convolution_param {
     num_output: 21
@@ -21541,12 +21541,12 @@ layer {
 ### SUM the all branches
 
 layer {
-  bottom: "fc1_${EXP}_c0"
-  bottom: "fc1_${EXP}_c1"
-  bottom: "fc1_${EXP}_c2"
-  bottom: "fc1_${EXP}_c3"
-  top: "fc1_${EXP}"
-  name: "fc1_${EXP}"
+  bottom: "fc1_voc12_c0"
+  bottom: "fc1_voc12_c1"
+  bottom: "fc1_voc12_c2"
+  bottom: "fc1_voc12_c3"
+  top: "fc1_voc12"
+  name: "fc1_voc12"
   type: "Eltwise"
   eltwise_param {
     operation: SUM
@@ -21556,15 +21556,15 @@ layer {
 ######################## classifier for res 0.5 #################
 
 layer {
-  name: "fc1_${EXP}_res05_c0"
+  name: "fc1_voc12_res05_c0"
   type: "Convolution"
   bottom: "res5c_res05"
-  top: "fc1_${EXP}_res05_c0"
+  top: "fc1_voc12_res05_c0"
   param {
-    name: "fc1_${EXP}_c0_w"
+    name: "fc1_voc12_c0_w"
   }
   param {
-    name: "fc1_${EXP}_c0_b"
+    name: "fc1_voc12_c0_b"
   }
   convolution_param {
     num_output: 21
@@ -21575,15 +21575,15 @@ layer {
 }
 
 layer {
-  name: "fc1_${EXP}_res05_c1"
+  name: "fc1_voc12_res05_c1"
   type: "Convolution"
   bottom: "res5c_res05"
-  top: "fc1_${EXP}_res05_c1"
+  top: "fc1_voc12_res05_c1"
   param {
-    name: "fc1_${EXP}_c1_w"
+    name: "fc1_voc12_c1_w"
   }
   param {
-    name: "fc1_${EXP}_c1_b"
+    name: "fc1_voc12_c1_b"
   }
   convolution_param {
     num_output: 21
@@ -21593,15 +21593,15 @@ layer {
   }
 }
 layer {
-  name: "fc1_${EXP}_res05_c2"
+  name: "fc1_voc12_res05_c2"
   type: "Convolution"
   bottom: "res5c_res05"
-  top: "fc1_${EXP}_res05_c2"
+  top: "fc1_voc12_res05_c2"
   param {
-    name: "fc1_${EXP}_c2_w"
+    name: "fc1_voc12_c2_w"
   }
   param {
-    name: "fc1_${EXP}_c2_b"
+    name: "fc1_voc12_c2_b"
   }
   convolution_param {
     num_output: 21
@@ -21611,15 +21611,15 @@ layer {
   }
 }
 layer {
-  name: "fc1_${EXP}_res05_c3"
+  name: "fc1_voc12_res05_c3"
   type: "Convolution"
   bottom: "res5c_res05"
-  top: "fc1_${EXP}_res05_c3"
+  top: "fc1_voc12_res05_c3"
   param {
-    name: "fc1_${EXP}_c3_w"
+    name: "fc1_voc12_c3_w"
   }
   param {
-    name: "fc1_${EXP}_c3_b"
+    name: "fc1_voc12_c3_b"
   }
   convolution_param {
     num_output: 21
@@ -21632,12 +21632,12 @@ layer {
 ### SUM the all branches
 
 layer {
-  bottom: "fc1_${EXP}_res05_c0"
-  bottom: "fc1_${EXP}_res05_c1"
-  bottom: "fc1_${EXP}_res05_c2"
-  bottom: "fc1_${EXP}_res05_c3"
-  top: "fc1_${EXP}_res05"
-  name: "fc1_${EXP}_res05"
+  bottom: "fc1_voc12_res05_c0"
+  bottom: "fc1_voc12_res05_c1"
+  bottom: "fc1_voc12_res05_c2"
+  bottom: "fc1_voc12_res05_c3"
+  top: "fc1_voc12_res05"
+  name: "fc1_voc12_res05"
   type: "Eltwise"
   eltwise_param {
     operation: SUM
@@ -21648,15 +21648,15 @@ layer {
 ################### classifier for res 0.75 ###########
 
 layer {
-  name: "fc1_${EXP}_res075_c0"
+  name: "fc1_voc12_res075_c0"
   type: "Convolution"
   bottom: "res5c_res075"
-  top: "fc1_${EXP}_res075_c0"
+  top: "fc1_voc12_res075_c0"
   param {
-    name: "fc1_${EXP}_c0_w"
+    name: "fc1_voc12_c0_w"
   }
   param {
-    name: "fc1_${EXP}_c0_b"
+    name: "fc1_voc12_c0_b"
   }
   convolution_param {
     num_output: 21
@@ -21667,15 +21667,15 @@ layer {
 }
 
 layer {
-  name: "fc1_${EXP}_res075_c1"
+  name: "fc1_voc12_res075_c1"
   type: "Convolution"
   bottom: "res5c_res075"
-  top: "fc1_${EXP}_res075_c1"
+  top: "fc1_voc12_res075_c1"
   param {
-    name: "fc1_${EXP}_c1_w"
+    name: "fc1_voc12_c1_w"
   }
   param {
-    name: "fc1_${EXP}_c1_b"
+    name: "fc1_voc12_c1_b"
   }
   convolution_param {
     num_output: 21
@@ -21686,15 +21686,15 @@ layer {
 }
 
 layer {
-  name: "fc1_${EXP}_res075_c2"
+  name: "fc1_voc12_res075_c2"
   type: "Convolution"
   bottom: "res5c_res075"
-  top: "fc1_${EXP}_res075_c2"
+  top: "fc1_voc12_res075_c2"
   param {
-    name: "fc1_${EXP}_c2_w"
+    name: "fc1_voc12_c2_w"
   }
   param {
-    name: "fc1_${EXP}_c2_b"
+    name: "fc1_voc12_c2_b"
   }
   convolution_param {
     num_output: 21
@@ -21705,15 +21705,15 @@ layer {
 }
 
 layer {
-  name: "fc1_${EXP}_res075_c3"
+  name: "fc1_voc12_res075_c3"
   type: "Convolution"
   bottom: "res5c_res075"
-  top: "fc1_${EXP}_res075_c3"
+  top: "fc1_voc12_res075_c3"
   param {
-    name: "fc1_${EXP}_c3_w"
+    name: "fc1_voc12_c3_w"
   }
   param {
-    name: "fc1_${EXP}_c3_b"
+    name: "fc1_voc12_c3_b"
   }
   convolution_param {
     num_output: 21
@@ -21726,12 +21726,12 @@ layer {
 ### SUM the all branches
 
 layer {
-  bottom: "fc1_${EXP}_res075_c0"
-  bottom: "fc1_${EXP}_res075_c1"
-  bottom: "fc1_${EXP}_res075_c2"
-  bottom: "fc1_${EXP}_res075_c3"
-  top: "fc1_${EXP}_res075"
-  name: "fc1_${EXP}_res075"
+  bottom: "fc1_voc12_res075_c0"
+  bottom: "fc1_voc12_res075_c1"
+  bottom: "fc1_voc12_res075_c2"
+  bottom: "fc1_voc12_res075_c3"
+  top: "fc1_voc12_res075"
+  name: "fc1_voc12_res075"
   type: "Eltwise"
   eltwise_param {
     operation: SUM
@@ -21739,9 +21739,9 @@ layer {
 }
 ############### upsampling ##################
 layer {
-  bottom: "fc1_${EXP}_res05"
-  top: "fc1_${EXP}_res05_interp"
-  name: "fc1_${EXP}_res05_interp"
+  bottom: "fc1_voc12_res05"
+  top: "fc1_voc12_res05_interp"
+  name: "fc1_voc12_res05_interp"
   type: "Interp"
   interp_param {
     zoom_factor: 2
@@ -21750,9 +21750,9 @@ layer {
   }
 }
 layer {
-  bottom: "fc1_${EXP}_res075"
-  top: "fc1_${EXP}_res075_interp"
-  name: "fc1_${EXP}_res075_interp"
+  bottom: "fc1_voc12_res075"
+  top: "fc1_voc12_res075_interp"
+  name: "fc1_voc12_res075_interp"
   type: "Interp"
   interp_param {
     zoom_factor: 4
@@ -21764,9 +21764,9 @@ layer {
 
 ############### merging multiscale results #####################
 layer {
-  bottom: "fc1_${EXP}"
-  bottom: "fc1_${EXP}_res075_interp"
-  bottom: "fc1_${EXP}_res05_interp"
+  bottom: "fc1_voc12"
+  bottom: "fc1_voc12_res075_interp"
+  bottom: "fc1_voc12_res05_interp"
   top: "fc_fusion"
   name: "fc_fusion"
   type: "Eltwise"
@@ -21806,7 +21806,7 @@ layer {
 #   }
 #   mat_write_param {
 #     prefix: "${FEATURE_DIR}/${TEST_SET}/fc1/"
-#     source: "${EXP}/list/${TEST_SET}_id.txt"
+#     source: "voc12/list/${TEST_SET}_id.txt"
 #     strip: 0
 #     period: 1
 #   }
@@ -21862,7 +21862,7 @@ layer {
 #   }
 #   mat_write_param {
 #     prefix: "${FEATURE_DIR}/${TEST_SET}/crf/"
-#     source: "${EXP}/list/${TEST_SET}${TEST_SET_POSTFIX}_id.txt"
+#     source: "voc12/list/${TEST_SET}${TEST_SET_POSTFIX}_id.txt"
 #     strip: 0
 #     period: 1
 #   }
