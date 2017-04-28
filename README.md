@@ -20,6 +20,11 @@ Step 2: Now that we have our initialization, we can train deeplab-resnet by runn
 ```
 python train.py
 ```
+To get a description of each command-line arguments, run
+```
+python train.py -h
+```
+
 By default, snapshots are saved in every 1000 iterations in the  data/snapshots.
 The following features have been implemented in this repository -
 * Training regime is the same as that of the caffe implementation - SGD with momentum is used, along with the `poly` lr decay policy. A weight decay has been used. The last layer has `10` times the learning of other layers.  
@@ -31,7 +36,11 @@ Evaluation of the saved models can be done by running
 ```
 python evalpyt.py
 ```
+To get a description of each command-line arguments, run
+```
+python evalpyt.py -h
+```
 ### Results
-When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation accuray of 78.49% (validation set has 1449 images, [authors](https://arxiv.org/abs/1606.00915) report validation performance of 77.69% with their caffe implementation)
+When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 78.49% (mean IOU over all classes, validation set has 1449 images, [authors](https://arxiv.org/abs/1606.00915) report validation performance of 77.69% with their caffe implementation)
 ## Acknowledgement
 A part of the code has been borrowed from [https://github.com/ry/tensorflow-resnet](https://github.com/ry/tensorflow-resnet)
