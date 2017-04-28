@@ -3,7 +3,7 @@ DeepLab resnet model in pytorch
 
 # Usage
 ### Replicating caffe performance
-The repository contains model definition of deeplab-resnet in pytorch. To use this code, download the deeplab-resnet caffemodel (`train\_iter\_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
+The repository contains model definition of deeplab-resnet in pytorch. To use this code, download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
 ```
 python convert_deeplab_resnet.py
 ```
