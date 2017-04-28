@@ -214,7 +214,7 @@ def get_10x_lr_params(model):
 
 
 model = getattr(deeplab_resnet,'Res_Deeplab')()
-saved_state_dict = torch.load('MS_DeepLab_resnet_pretrained_COCO_init.pth')
+saved_state_dict = torch.load('data/MS_DeepLab_resnet_pretrained_COCO_init.pth')
 model.load_state_dict(saved_state_dict)
 
 max_iter = int(args['--maxIter']) 

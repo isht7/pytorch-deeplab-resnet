@@ -11,11 +11,9 @@ import torch
 from torch.autograd import Variable
 import torchvision.models as models
 import torch.nn.functional as F
-import torch.nn as nn
 import deeplab_resnet
 from collections import OrderedDict
-import matplotlib.pyplot as plt
-import cv2
+
 class CaffeParamProvider():
     def __init__(self, caffe_net):
         self.caffe_net = caffe_net
@@ -51,10 +49,10 @@ class CaffeParamProvider():
         return b
 
 
-def preprocess(out):
-    #"""Changes RGB [0,1] valued image to BGR [0,255] with mean subtracted."""
-    #out = np.copy(img) * 255.0
-    #out = out[:, :, [2, 1, 0]]  # swap channel from RGB to BGR
+def preprocess(img):
+    """Changes RGB [0,1] valued image to BGR [0,255] with mean subtracted."""
+    out = np.copy(img) * 255.0
+    out = out[:, :, [2, 1, 0]]  # swap channel from RGB to BGR
     out[0] -= 104.008
     out[1] -= 116.669
     out[2] -= 122.675
@@ -89,14 +87,12 @@ def dist_(caffe_tensor, th_tensor):
 # returns image of shape [321, 321, 3]
 # [height, width, depth]
 def load_image(path, size=321):
-    #img = skimage.io.imread(path)
-    #short_edge = min(img.shape[:2])
-    #yy = int((img.shape[0] - short_edge) / 2)
-    #xx = int((img.shape[1] - short_edge) / 2)
-    img = cv2.imread(path)
-    resized_img = cv2.resize(img,(321,321)).astype(float)
-    #crop_img = img[yy:yy + short_edge, xx:xx + short_edge]
-    #esized_img = skimage.transform.resize(crop_img, (size, size))
+    img = skimage.io.imread(path)
+    short_edge = min(img.shape[:2])
+    yy = int((img.shape[0] - short_edge) / 2)
+    xx = int((img.shape[1] - short_edge) / 2)
+    crop_img = img[yy:yy + short_edge, xx:xx + short_edge]
+    resized_img = skimage.transform.resize(crop_img, (size, size))
     return resized_img
 
 
@@ -104,8 +100,8 @@ def load_caffe(img_p, layers=50):
     caffe.set_mode_cpu()
     #caffe.set_device(0)
 
-    prototxt = "data/test.prototxt" 
-    caffemodel = "data/train_iter_20000.caffemodel" 
+    prototxt = "data/test_Scale1.prototxt" 
+    caffemodel = "data/init.caffemodel" 
     net = caffe.Net(prototxt,caffemodel,  caffe.TEST)
 
     net.blobs['data'].data[0] = img_p.transpose((2, 0, 1))
@@ -131,9 +127,9 @@ def parse_pth_varnames(p, pth_varname, num_layers):
     if MultiScale == 1:
         post =  ''
     elif MultiScale == 2:
-        post = '_res075'
+        post = '' # modified
     elif MultiScale == 3:
-        post = '_res05'
+        post = '' # modified
     #    Scale3.layer5.conv2d_list.2.bias
     if ('weight' in pth_varname and 'conv2d_list' in pth_varname):
 #        #print ('res%d%s_branch%d%s'+post) % x
@@ -172,7 +168,6 @@ def parse_pth_varnames(p, pth_varname, num_layers):
         return p.fc_biases('fc1000')
 
     re1 = 'Scale(\d+).layer(\d+).(\d+).(downsample|conv1|bn1|conv2|bn2|conv3|bn3)'
-    #re1 = 'scale(\d+)/block(\d+)/(shortcut|a|b|c|A|B)'
     m = re.search(re1, pth_varname)
 
     def letter(i):
@@ -231,11 +226,7 @@ def parse_pth_varnames(p, pth_varname, num_layers):
 
     raise ValueError('unhandled var ' + pth_varname)
 
-
-def checkpoint_fn(layers):
-    return 'resnet%d.pth' % layers
-
-def convert(img_p, layers):
+def convert(img, img_p, layers):
     caffe_model = load_caffe(img_p, layers)
 
     param_provider = CaffeParamProvider(caffe_model)
@@ -268,36 +259,28 @@ def convert(img_p, layers):
     model.eval()
     output = model(Variable(torch.from_numpy(img_p[np.newaxis, :].transpose(0,3,1,2)).float(),volatile=True))  
     
-    interp = nn.UpsamplingBilinear2d(size=(321, 321))
-    output_temp = interp(output[3]).cpu().data[0].numpy()
-    output_temp = output_temp.transpose(1,2,0)
-    output_temp = np.argmax(output_temp,axis = 2)
-    plt.imshow(output_temp)
-    plt.show()
+
     dist_(caffe_model.blobs['data'].data,o[0])
     dist_(caffe_model.blobs['conv1'].data,o[3])
     dist_(caffe_model.blobs['pool1'].data,o[4])
     dist_(caffe_model.blobs['res2a'].data,o[5])
     dist_(caffe_model.blobs['res5c'].data,o[6])
-    dist_(caffe_model.blobs['res5c_res075'].data,o[7])
-    dist_(caffe_model.blobs['res5c_res05'].data,o[8])
-    dist_(caffe_model.blobs['fc_fusion'].data,output[3].data.numpy())
+    dist_(caffe_model.blobs['fc1_voc12'].data,output[3].data.numpy())
 
     print 'input image shape',img_p[np.newaxis, :].transpose(0,3,1,2).shape
     print 'output shapes -'
     for a in output:
 	print 	a.data.numpy().shape
 
-    torch.save(model.state_dict(),'data/MS_DeepLab_resnet_trained_VOC.pth')
+    torch.save(model.state_dict(),'data/MS_DeepLab_resnet_pretrained_COCO_init.pth')
 
 
 def main():
-    #img = load_image("data/cat.jpg")
-    img = load_image("data/2007_000033.jpg")
+    img = load_image("data/cat.jpg")
     img_p = preprocess(img)
 
-    print "CONVERTING Multi-scale DeepLab_resnet"
-    convert(img_p, layers = 101)
+    print "CONVERTING Multi-scale DeepLab_resnet COCO init"
+    convert(img, img_p, layers = 101)
 
 
 if __name__ == '__main__':
