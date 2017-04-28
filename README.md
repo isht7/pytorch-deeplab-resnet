@@ -27,7 +27,7 @@ python train.py -h
 
 By default, snapshots are saved in every 1000 iterations in the  data/snapshots.
 The following features have been implemented in this repository -
-* Training regime is the same as that of the caffe implementation - SGD with momentum is used, along with the `poly` lr decay policy. A weight decay has been used. The last layer has `10` times the learning of other layers.  
+* Training regime is the same as that of the caffe implementation - SGD with momentum is used, along with the `poly` lr decay policy. A weight decay has been used. The last layer has `10` times the learning rate of other layers.  
 * The iter\_size parameter of caffe has been implemented, effectively increasing the batch\_size to batch\_size times iter\_size
 * Random flipping and random scaling of input has been used as data augmentation.
 * The boundary label (255 in ground truth labels) has not been ignored in the loss function in the current version, instead it has been merged with the background. The ignore\_label caffe parameter would be implemented in the future versions. Post processing using CRF has not been implemented. 
