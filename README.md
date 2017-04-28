@@ -1,7 +1,7 @@
 # pytorch-deeplab-resnet
 [DeepLab resnet](https://arxiv.org/abs/1606.00915) model implementation in pytorch. 
 
-The architecture of deepLab-ResNet has been replicated exactly as it is from the caffe implementation. This architecture calculates losses on multiple scales(1x, 0.75x,0.5x). Loss is calculated individually over these 3 scales. In addition to these 3 losses, one more loss is calculated after merging the output score maps on the 3 aforementioned scales.
+The architecture of deepLab-ResNet has been replicated exactly as it is from the caffe implementation. This architecture calculates losses on multiple scales ( 1x, 0.75x, 0.5x ). Loss is calculated individually over these 3 scales. In addition to these 3 losses, one more loss is calculated after merging the output score maps on the 3 aforementioned scales.
 # Usage
 ### Replicating caffe performance
 To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
@@ -41,6 +41,11 @@ To get a description of each command-line arguments, run
 python evalpyt.py -h
 ```
 ### Results
-When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 78.49% (mean IOU over all classes, validation set has 1449 images, [authors](https://arxiv.org/abs/1606.00915) report validation performance of 77.69% with their caffe implementation)
+When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 78.49% (mean IOU over all classes, validation set has 1449 images, [authors](https://arxiv.org/abs/1606.00915) report validation performance of 77.69% with their caffe implementation).
+
+To replicate this performance, run 
+```
+train.py --lr 0.00025 --wtDecay 0.0005 --maxIter 20000 --GTpath=<train gt images path here> --IMpath==<train images path here>
+```
 ## Acknowledgement
 A part of the code has been borrowed from [https://github.com/ry/tensorflow-resnet](https://github.com/ry/tensorflow-resnet)
