@@ -9,7 +9,7 @@ python convert_deeplab_resnet.py
 ```
 to generate the corresponding pytorch model file (.pth). If you want to train your model in pytorch, move to the next section.
 ### Training 
-Step 1: Convert `init.caffemodel` to a .pth file, 'init.caffemodel' contains MS COCO trained weights. We use these weights as initilization for all but the final layer of our model. For the last layer, we use random gaussian with a standard deviation of 0.01 as the initialization.
+Step 1: Convert `init.caffemodel` to a .pth file: `init.caffemodel` contains MS COCO trained weights. We use these weights as initilization for all but the final layer of our model. For the last layer, we use random gaussian with a standard deviation of 0.01 as the initialization.
 To convert `init.caffemodel` to a .pth file, run
 ```
 python init_net_surgery.py
