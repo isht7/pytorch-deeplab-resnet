@@ -27,8 +27,8 @@ Options:
     -h, --help                  Print this message
     --visualize                 view outputs of each sketch
     --snapPrefix=<str>          Snapshot [default: VOC12_scenes_]
-    --testGTpath=<str>          Ground truth path prefix [default: data/img/]
-    --testIMpath=<str>          Sketch images path prefix [default: data/gt/]
+    --testGTpath=<str>          Ground truth path prefix [default: data/gt/]
+    --testIMpath=<str>          Sketch images path prefix [default: data/img/]
     --gpu0=<int>                GPU number [default: 0]
 """
 
@@ -101,7 +101,7 @@ for iter in range(1,21):   #TODO set the (different iteration)models that you wa
         
         output = output.transpose(1,2,0)
         output = np.argmax(output,axis = 2)
-        if args['--visualize']
+        if args['--visualize']:
             plt.subplot(3, 1, 1)
             plt.imshow(img_original)
             plt.subplot(3, 1, 2)
