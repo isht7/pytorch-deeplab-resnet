@@ -49,5 +49,6 @@ To replicate this performance, run
 train.py --lr 0.00025 --wtDecay 0.0005 --maxIter 20000 --GTpath <train gt images path here> --IMpath <train images path here> --LISTpath data/list/train_aug.txt
 ```
 ## Acknowledgement
-This work was done during my time at [Video Analytics Lab](http://val.serc.iisc.ernet.in/valweb/). Thanks to them for their Titan-Xs. 
+This work was done during my time at [Video Analytics Lab](http://val.serc.iisc.ernet.in/valweb/). A big thanks to them for their GPUs.
+ 
 A part of the code has been borrowed from [https://github.com/ry/tensorflow-resnet](https://github.com/ry/tensorflow-resnet)
