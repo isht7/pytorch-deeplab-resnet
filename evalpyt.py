@@ -18,7 +18,7 @@ import torch.nn as nn
 
 from docopt import docopt
 
-docstr = """Evaluate ResNet-DeepLab
+docstr = """Evaluate ResNet-DeepLab trained on scenes (VOC 2012),a total of 21 labels including beackground
 
 Usage: 
     evalpyt.py [options]
