@@ -18,10 +18,10 @@ import torch.nn as nn
 
 from docopt import docopt
 
-docstr = """Evaluate ResNet-DeepLab with 5 branches on sketches of 11 categories (5 super categories)
+docstr = """Evaluate ResNet-DeepLab
 
 Usage: 
-    eval_r5.py [options]
+    evalpyt.py [options]
 
 Options:
     -h, --help                  Print this message
