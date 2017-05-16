@@ -30,6 +30,8 @@ To get a description of each command-line arguments, run
 ```
 python train.py -h
 ```
+To run `train.py`, pytorch (python 2.7) is required.
+
 
 By default, snapshots are saved in every 1000 iterations in the  data/snapshots.
 The following features have been implemented in this repository -
