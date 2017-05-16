@@ -10,6 +10,7 @@ To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915
 python convert_deeplab_resnet.py
 ```
 to generate the corresponding pytorch model file (.pth). The generated .pth snapshot file can be used to get the same test performace as offered by using the caffemodel in caffe. If you do not want to generate the .pth file yourself, you can download it [here](https://drive.google.com/file/d/0BxhUwxvLPO7Tb210MFB5WmQ1elE/view?usp=sharing).
+To run `convert_deeplab_resnet.py`, [deeplab v2 caffe](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and pytorch (python 2.7) are required.
 If you want to train your model in pytorch, move to the next section.
 ### Training 
 Step 1: Convert `init.caffemodel` to a .pth file: `init.caffemodel` contains MS COCO trained weights. We use these weights as initilization for all but the final layer of our model. For the last layer, we use random gaussian with a standard deviation of 0.01 as the initialization.
@@ -17,6 +18,7 @@ To convert `init.caffemodel` to a .pth file, run (or download the converted .pth
 ```
 python init_net_surgery.py
 ```
+To run `init_net_surgery .py`, [deeplab v2 caffe](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and pytorch (python 2.7) are required.
 Step 2: Now that we have our initialization, we can train deeplab-resnet by running,
 ```
 python train.py
