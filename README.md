@@ -40,6 +40,9 @@ The following features have been implemented in this repository -
 * Random flipping and random scaling of input has been used as data augmentation.
 * The boundary label (255 in ground truth labels) has not been ignored in the loss function in the current version, instead it has been merged with the background. The ignore\_label caffe parameter would be implemented in the future versions. Post processing using CRF has not been implemented.
 * Batchnorm parameters are kept fixed during training. Also, caffe setting `use_global_stats = True` is reproduced during training. Running mean and variance is not calculated during.
+
+When run on a Nvidia Titan X GPU, `train.py` occupies about 11.9 GB of memory. 
+
 ### Evaluation
 Evaluation of the saved models can be done by running
 ```
