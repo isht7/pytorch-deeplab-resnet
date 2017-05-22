@@ -2,8 +2,7 @@ data/MS_DeepLab_resnet_pretrained_COCO_init.pth
 data/gt/
 data/img/
 data/snapshots/
-
-
+data/*.caffemodel
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
