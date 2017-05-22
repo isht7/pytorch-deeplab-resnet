@@ -292,8 +292,8 @@ def convert(img_p, layers):
 
 
 def main():
-    #img = load_image("data/cat.jpg")
-    img = load_image("data/2007_000033.jpg")
+    img = load_image("data/cat.jpg")
+    #img = load_image("data/2007_000033.jpg")
     img_p = preprocess(img)
 
     print "CONVERTING Multi-scale DeepLab_resnet"
