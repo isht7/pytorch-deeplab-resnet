@@ -196,6 +196,13 @@ if not os.path.exists('data/snapshots'):
 #model = getattr(deeplab_resnet,'Res_Deeplab')()
 model = deeplab_resnet.Res_Deeplab(int(args['--NoLabels']))
 saved_state_dict = torch.load('data/MS_DeepLab_resnet_pretrained_COCO_init.pth')
+if int(args['--NoLabels'])!=21:
+    for i in saved_state_dict:
+        #Scale3.layer5.conv2d_list.3.weight
+        i_parts = i.split('.')
+        if i_parts[1]=='layer5':
+            saved_state_dict[i] = model.state_dict()[i]
+
 model.load_state_dict(saved_state_dict)
 
 max_iter = int(args['--maxIter']) 

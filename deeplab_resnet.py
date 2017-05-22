@@ -208,7 +208,7 @@ class MS_Deeplab(nn.Module):
 	return out
 
 
-def Res_Deeplab(NoLabels):
+def Res_Deeplab(NoLabels=21):
     model = MS_Deeplab(Bottleneck,NoLabels)
     return model
 
