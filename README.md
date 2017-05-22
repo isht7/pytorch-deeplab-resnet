@@ -5,7 +5,7 @@ The architecture of deepLab-ResNet has been replicated exactly as it is from the
 
 # Usage
 ## Branch custom_maxLabel
-This branch differs from the master in that the number of labels can be modified in this version while training, enabling use of custom data for training. Additional flags have been provided in `train.py` and `eval.py` to enable training with custom data.
+This branch differs from the master in that the number of labels can be modified in this version while training, enabling use of custom data for training. Additional flags have been provided in `train.py` and `eval.py` to enable training and evaluation with custom data.
 ### Replicating caffe performance
 To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
 ```
