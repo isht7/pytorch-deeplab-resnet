@@ -6,7 +6,8 @@ The architecture of deepLab-ResNet has been replicated exactly as it is from the
 ## Updates
 
 **24 June 2017**
-Now, weights over the 3 scales ( 1x, 0.75x, 0.5x ) are shared as in the caffe implementation. Previously, each of the 3 scales had seperate weights. Results are almost same after making this change (more in the results section). However, the size of the trained .pth model has reduced significantly. Memory (11.9 GB) and time taken (~3.5 hours) during training are same as before. Links to corresponding .pth files have been updated.
+
+Now, weights over the 3 scales ( 1x, 0.75x, 0.5x ) are shared as in the caffe implementation. Previously, each of the 3 scales had seperate weights. Results are almost same after making this change (more in the results section). However, the size of the trained .pth model has reduced significantly. Memory occupied on GPU(11.9 GB) and time taken (~3.5 hours) during training are same as before. Links to corresponding .pth files have been updated.
 
 # Usage
 ### Replicating caffe performance
@@ -58,7 +59,7 @@ To get a description of each command-line arguments, run
 python evalpyt.py -h
 ```
 ### Results
-When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 78.48% (mean IOU over all classes, validation set has 1449 images, [authors](https://arxiv.org/abs/1606.00915) report validation performance of 77.69% with their caffe implementation).
+When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 78.48% (Mean IOU is calculated over each image and these values are averaged together. This way of calculating is different than the one used by [authors](https://arxiv.org/abs/1606.00915). The method used by [authors](https://arxiv.org/abs/1606.00915) is presently in [development](https://github.com/isht7/pytorch-deeplab-resnet/tree/development) branch and moved here in some time.)
 You can download the corresponding .pth file [here](https://drive.google.com/open?id=0BxhUwxvLPO7TT0Y5UndZckIwMVE)
 
 To replicate this performance, run 
