@@ -126,43 +126,35 @@ def parse_pth_varnames(p, pth_varname, num_layers):
 
 
     post = ''
-    MultiScale = int(pth_varname[5])
     EXP = 'voc12'
-    if MultiScale == 1:
-        post =  ''
-    elif MultiScale == 2:
-        post = '_res075'
-    elif MultiScale == 3:
-        post = '_res05'
-    #    Scale3.layer5.conv2d_list.2.bias
     if ('weight' in pth_varname and 'conv2d_list' in pth_varname):
 #        #print ('res%d%s_branch%d%s'+post) % x
         if len(post)!=0:
             post = post[1:]+'_' 
-        y = (EXP,int(pth_varname[26]))
+        y = (EXP,int(pth_varname[25]))
         return p.conv_kernel(('fc1_%s_'+post+ 'c%d') % y)
 
     if ('bias' in pth_varname and 'conv2d_list' in pth_varname):
 #        #print ('res%d%s_branch%d%s'+post) % x
          if len(post)!=0:
             post = post[1:]+'_'
-         y = (EXP,int(pth_varname[26]))
+         y = (EXP,int(pth_varname[25]))
          return p.conv_biases(('fc1_%s_'+post+'c%d') % y)
 
 
-    if pth_varname == 'Scale'+str(MultiScale)+'.conv1.weight':
+    if pth_varname == 'Scale.conv1.weight':
         return p.conv_kernel('conv1'+post)
 
-    elif pth_varname == 'Scale'+str(MultiScale)+'.bn1.weight':
+    elif pth_varname == 'Scale.bn1.weight':
         return p.bn_gamma('scale_conv1'+post)
 
-    elif pth_varname == 'Scale'+str(MultiScale)+'.bn1.bias':
+    elif pth_varname == 'Scale.bn1.bias':
         return p.bn_beta('scale_conv1'+post)
 
-    elif pth_varname == 'Scale'+str(MultiScale)+'.bn1.running_mean':
+    elif pth_varname == 'Scale.bn1.running_mean':
         return p.bn_mean('bn_conv1'+post)
 
-    elif pth_varname == 'Scale'+str(MultiScale)+'.bn1.running_var':
+    elif pth_varname == 'Scale.bn1.running_var':
         return p.bn_variance('bn_conv1'+post)
 
     elif pth_varname == 'fc.weight':
@@ -171,17 +163,16 @@ def parse_pth_varnames(p, pth_varname, num_layers):
     elif pth_varname == 'fc.bias':
         return p.fc_biases('fc1000')
 
-    re1 = 'Scale(\d+).layer(\d+).(\d+).(downsample|conv1|bn1|conv2|bn2|conv3|bn3)'
+    re1 = 'Scale.layer(\d+).(\d+).(downsample|conv1|bn1|conv2|bn2|conv3|bn3)'
     #re1 = 'scale(\d+)/block(\d+)/(shortcut|a|b|c|A|B)'
     m = re.search(re1, pth_varname)
 
     def letter(i):
         return chr(ord('a') + i - 1)
-   # MultiScale = int(m.group(1)) + 1
 
-    scale_num = int(m.group(2)) + 1
+    scale_num = int(m.group(1)) + 1
 
-    block_num = int(m.group(3)) + 1
+    block_num = int(m.group(2)) + 1
 
 
 
@@ -204,7 +195,7 @@ def parse_pth_varnames(p, pth_varname, num_layers):
     else:
         raise ValueError("unexpected scale_num %d" % scale_num)
 
-    branch = m.group(4)
+    branch = m.group(3)
     if branch == "downsample":
         branch_num = 1
         conv_letter = ''
@@ -243,6 +234,7 @@ def convert(img_p, layers):
     old_dict = model.state_dict()
     new_state_dict = OrderedDict()
     keys = model.state_dict().keys()
+
     for var_name in keys[:]:
         data = parse_pth_varnames(param_provider, var_name, layers)
         new_state_dict[var_name] = torch.from_numpy(data).float()
@@ -255,15 +247,15 @@ def convert(img_p, layers):
         #print module
         o.append(input[0].data.numpy())
     
-    model.Scale1.conv1.register_forward_hook(hook)   #0, data
-    model.Scale1.bn1.register_forward_hook(hook)     #1 conv1 out
-    model.Scale1.relu.register_forward_hook(hook)  #2 batch norm out
-    model.Scale1.maxpool.register_forward_hook(hook)    #3 bn1, relu out
-    model.Scale1.layer1._modules['0'].conv1.register_forward_hook(hook)   #4, pool1 out 
-    model.Scale1.layer1._modules['1'].conv1.register_forward_hook(hook) #5, res2a out
-    model.Scale1.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #6, res5c out
-    model.Scale3.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #7, res5c_res075 out
-    model.Scale2.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #8, res5c_res05 out
+    model.Scale.conv1.register_forward_hook(hook)   #0, data
+    model.Scale.bn1.register_forward_hook(hook)     #1 conv1 out
+    model.Scale.relu.register_forward_hook(hook)  #2 batch norm out
+    model.Scale.maxpool.register_forward_hook(hook)    #3 bn1, relu out
+    model.Scale.layer1._modules['0'].conv1.register_forward_hook(hook)   #4, pool1 out 
+    model.Scale.layer1._modules['1'].conv1.register_forward_hook(hook) #5, res2a out
+    model.Scale.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #6, res5c out
+    #model.Scale.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #7, res5c_res075 out
+    #model.Scale.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #8, res5c_res05 out
 
     model.eval()
     output = model(Variable(torch.from_numpy(img_p[np.newaxis, :].transpose(0,3,1,2)).float(),volatile=True))  
@@ -272,16 +264,28 @@ def convert(img_p, layers):
     output_temp = interp(output[3]).cpu().data[0].numpy()
     output_temp = output_temp.transpose(1,2,0)
     output_temp = np.argmax(output_temp,axis = 2)
-    plt.imshow(output_temp)
-    plt.show()
+    #plt.imshow(output_temp)
+    #plt.show()
     dist_(caffe_model.blobs['data'].data,o[0])
     dist_(caffe_model.blobs['conv1'].data,o[3])
     dist_(caffe_model.blobs['pool1'].data,o[4])
     dist_(caffe_model.blobs['res2a'].data,o[5])
     dist_(caffe_model.blobs['res5c'].data,o[6])
-    dist_(caffe_model.blobs['res5c_res075'].data,o[7])
-    dist_(caffe_model.blobs['res5c_res05'].data,o[8])
+    #dist_(caffe_model.blobs['res5c_res075'].data,o[7])
+    #dist_(caffe_model.blobs['res5c_res05'].data,o[8])
+    dist_(caffe_model.blobs['fc1_voc12'].data,output[0].data.numpy())
+    dist_(caffe_model.blobs['fc1_voc12_res075_interp'].data,output[1].data.numpy())
+    dist_(caffe_model.blobs['fc1_voc12_res05'].data,output[2].data.numpy())
     dist_(caffe_model.blobs['fc_fusion'].data,output[3].data.numpy())
+    dist_(caffe_model.params['fc1_voc12_res075_c0'][0].data, model.state_dict()['Scale.layer5.conv2d_list.0.weight'].cpu().numpy())
+    dist_(caffe_model.params['fc1_voc12_res075_c0'][1].data, model.state_dict()['Scale.layer5.conv2d_list.0.bias'].cpu().numpy())
+    dist_(caffe_model.params['fc1_voc12_res075_c1'][0].data, model.state_dict()['Scale.layer5.conv2d_list.1.weight'].cpu().numpy())
+    dist_(caffe_model.params['fc1_voc12_res075_c1'][1].data, model.state_dict()['Scale.layer5.conv2d_list.1.bias'].cpu().numpy())
+    dist_(caffe_model.params['fc1_voc12_res075_c2'][0].data, model.state_dict()['Scale.layer5.conv2d_list.2.weight'].cpu().numpy())
+    dist_(caffe_model.params['fc1_voc12_res075_c2'][1].data, model.state_dict()['Scale.layer5.conv2d_list.2.bias'].cpu().numpy())
+
+    dist_(caffe_model.params['fc1_voc12_res075_c3'][0].data, model.state_dict()['Scale.layer5.conv2d_list.3.weight'].cpu().numpy())
+    dist_(caffe_model.params['fc1_voc12_res075_c3'][1].data, model.state_dict()['Scale.layer5.conv2d_list.3.bias'].cpu().numpy())
 
     print 'input image shape',img_p[np.newaxis, :].transpose(0,3,1,2).shape
     print 'output shapes -'
@@ -302,8 +306,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
 

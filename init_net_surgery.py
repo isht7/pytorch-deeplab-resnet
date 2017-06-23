@@ -122,43 +122,36 @@ def parse_pth_varnames(p, pth_varname, num_layers):
 
 
     post = ''
-    MultiScale = int(pth_varname[5])
     EXP = 'voc12'
-    if MultiScale == 1:
-        post =  ''
-    elif MultiScale == 2:
-        post = '' # modified
-    elif MultiScale == 3:
-        post = '' # modified
     #    Scale3.layer5.conv2d_list.2.bias
     if ('weight' in pth_varname and 'conv2d_list' in pth_varname):
 #        #print ('res%d%s_branch%d%s'+post) % x
         if len(post)!=0:
             post = post[1:]+'_' 
-        y = (EXP,int(pth_varname[26]))
+        y = (EXP,int(pth_varname[25]))
         return p.conv_kernel(('fc1_%s_'+post+ 'c%d') % y)
 
     if ('bias' in pth_varname and 'conv2d_list' in pth_varname):
 #        #print ('res%d%s_branch%d%s'+post) % x
          if len(post)!=0:
             post = post[1:]+'_'
-         y = (EXP,int(pth_varname[26]))
+         y = (EXP,int(pth_varname[25]))
          return p.conv_biases(('fc1_%s_'+post+'c%d') % y)
 
 
-    if pth_varname == 'Scale'+str(MultiScale)+'.conv1.weight':
+    if pth_varname == 'Scale.conv1.weight':
         return p.conv_kernel('conv1'+post)
 
-    elif pth_varname == 'Scale'+str(MultiScale)+'.bn1.weight':
+    elif pth_varname == 'Scale.bn1.weight':
         return p.bn_gamma('scale_conv1'+post)
 
-    elif pth_varname == 'Scale'+str(MultiScale)+'.bn1.bias':
+    elif pth_varname == 'Scale.bn1.bias':
         return p.bn_beta('scale_conv1'+post)
 
-    elif pth_varname == 'Scale'+str(MultiScale)+'.bn1.running_mean':
+    elif pth_varname == 'Scale.bn1.running_mean':
         return p.bn_mean('bn_conv1'+post)
 
-    elif pth_varname == 'Scale'+str(MultiScale)+'.bn1.running_var':
+    elif pth_varname == 'Scale.bn1.running_var':
         return p.bn_variance('bn_conv1'+post)
 
     elif pth_varname == 'fc.weight':
@@ -167,16 +160,15 @@ def parse_pth_varnames(p, pth_varname, num_layers):
     elif pth_varname == 'fc.bias':
         return p.fc_biases('fc1000')
 
-    re1 = 'Scale(\d+).layer(\d+).(\d+).(downsample|conv1|bn1|conv2|bn2|conv3|bn3)'
+    re1 = 'Scale.layer(\d+).(\d+).(downsample|conv1|bn1|conv2|bn2|conv3|bn3)' #changed to handle issue #4
     m = re.search(re1, pth_varname)
 
     def letter(i):
         return chr(ord('a') + i - 1)
-   # MultiScale = int(m.group(1)) + 1
 
-    scale_num = int(m.group(2)) + 1
+    scale_num = int(m.group(1)) + 1
 
-    block_num = int(m.group(3)) + 1
+    block_num = int(m.group(2)) + 1
 
 
 
@@ -199,7 +191,7 @@ def parse_pth_varnames(p, pth_varname, num_layers):
     else:
         raise ValueError("unexpected scale_num %d" % scale_num)
 
-    branch = m.group(4)
+    branch = m.group(3)
     if branch == "downsample":
         branch_num = 1
         conv_letter = ''
@@ -246,15 +238,13 @@ def convert(img, img_p, layers):
         #print module
         o.append(input[0].data.numpy())
     
-    model.Scale1.conv1.register_forward_hook(hook)   #0, data
-    model.Scale1.bn1.register_forward_hook(hook)     #1 conv1 out
-    model.Scale1.relu.register_forward_hook(hook)  #2 batch norm out
-    model.Scale1.maxpool.register_forward_hook(hook)    #3 bn1, relu out
-    model.Scale1.layer1._modules['0'].conv1.register_forward_hook(hook)   #4, pool1 out 
-    model.Scale1.layer1._modules['1'].conv1.register_forward_hook(hook) #5, res2a out
-    model.Scale1.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #6, res5c out
-    model.Scale3.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #7, res5c_res075 out
-    model.Scale2.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #8, res5c_res05 out
+    model.Scale.conv1.register_forward_hook(hook)   #0, data
+    model.Scale.bn1.register_forward_hook(hook)     #1 conv1 out
+    model.Scale.relu.register_forward_hook(hook)  #2 batch norm out
+    model.Scale.maxpool.register_forward_hook(hook)    #3 bn1, relu out
+    model.Scale.layer1._modules['0'].conv1.register_forward_hook(hook)   #4, pool1 out 
+    model.Scale.layer1._modules['1'].conv1.register_forward_hook(hook) #5, res2a out
+    model.Scale.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #6, res5c out
 
     model.eval()
     output = model(Variable(torch.from_numpy(img_p[np.newaxis, :].transpose(0,3,1,2)).float(),volatile=True))  

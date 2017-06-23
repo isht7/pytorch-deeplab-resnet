@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 from tqdm import *
 import random
 from docopt import docopt
-
+import timeit
+start = timeit.timeit
 docstr = """Train ResNet-DeepLab on VOC12 (scenes) in pytorch using MSCOCO pretrained initialization 
 
 Usage: 
@@ -107,7 +108,7 @@ def get_data_from_chunk_v2(chunk):
         gt_temp = flip(gt_temp,flip_p)
         gt[:,:,0,i] = gt_temp
         a = outS(321*scale)#41
-        b = outS(321*0.5*scale)#21
+        b = outS((321*0.5)*scale+1)#21
     labels = [resize_label_batch(gt,i) for i in [a,a,b,a]]
     images = images.transpose((3,2,0,1))
     images = torch.from_numpy(images).float()
@@ -144,27 +145,14 @@ def get_1x_lr_params_NOscale(model):
     """
     b = []
 
-    b.append(model.Scale1.conv1)
-    b.append(model.Scale1.bn1)
-    b.append(model.Scale1.layer1)
-    b.append(model.Scale1.layer2)
-    b.append(model.Scale1.layer3)
-    b.append(model.Scale1.layer4)
+    b.append(model.Scale.conv1)
+    b.append(model.Scale.bn1)
+    b.append(model.Scale.layer1)
+    b.append(model.Scale.layer2)
+    b.append(model.Scale.layer3)
+    b.append(model.Scale.layer4)
 
-    b.append(model.Scale2.conv1)
-    b.append(model.Scale2.bn1)
-    b.append(model.Scale2.layer1)
-    b.append(model.Scale2.layer2)
-    b.append(model.Scale2.layer3)
-    b.append(model.Scale2.layer4)
-
-    b.append(model.Scale3.conv1)
-    b.append(model.Scale3.bn1)
-    b.append(model.Scale3.layer1)
-    b.append(model.Scale3.layer2)
-    b.append(model.Scale3.layer3)
-    b.append(model.Scale3.layer4)
-
+    
     for i in range(len(b)):
         for j in b[i].modules():
             jj = 0
@@ -180,9 +168,7 @@ def get_10x_lr_params(model):
     """
 
     b = []
-    b.append(model.Scale1.layer5.parameters())
-    b.append(model.Scale2.layer5.parameters())
-    b.append(model.Scale3.layer5.parameters())
+    b.append(model.Scale.layer5.parameters())
 
     for j in range(len(b)):
         for i in b[j]:
@@ -245,4 +231,5 @@ for iter in range(max_iter+1):
     if iter % 1000 == 0 and iter!=0:
         print 'taking snapshot ...'
         torch.save(model.state_dict(),'data/snapshots/VOC12_scenes_'+str(iter)+'.pth')
-
+end = timeit.timeit
+print end-start,'seconds'
