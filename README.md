@@ -59,7 +59,7 @@ To get a description of each command-line arguments, run
 python evalpyt.py -h
 ```
 ### Results
-When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 78.48% (Mean IOU is calculated for each image and these values are averaged together. This way of calculating mean IOU is different than the one used by [authors](https://arxiv.org/abs/1606.00915). The method used by [authors](https://arxiv.org/abs/1606.00915) is presently in [development](https://github.com/isht7/pytorch-deeplab-resnet/tree/development) branch and will be moved here in some time.)
+When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 78.48% (Mean IOU is calculated for each image and these values are averaged together. This way of calculating mean IOU is different than the one used by [authors](https://arxiv.org/abs/1606.00915). The method used by [authors](https://arxiv.org/abs/1606.00915) is presently in [development](https://github.com/isht7/pytorch-deeplab-resnet/tree/development) branch [here](https://github.com/isht7/pytorch-deeplab-resnet/blob/development/evalpyt2.py) and will be moved here in some time.)
 You can download the corresponding .pth file [here](https://drive.google.com/open?id=0BxhUwxvLPO7TT0Y5UndZckIwMVE)
 
 To replicate this performance, run 
