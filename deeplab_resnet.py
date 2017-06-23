@@ -184,7 +184,7 @@ class ResNet(nn.Module):
 class MS_Deeplab(nn.Module):
     def __init__(self,block):
 	super(MS_Deeplab,self).__init__()
-	self.Scale = ResNet(block,[3, 4, 23, 3])   # for original scale
+	self.Scale = ResNet(block,[3, 4, 23, 3])   #changed to fix #4 
 
     def forward(self,x):
         input_size = x.size()[2]

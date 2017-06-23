@@ -113,13 +113,7 @@ def load_caffe(img_p, layers=50):
 
 
 def parse_pth_varnames(p, pth_varname, num_layers):
-    # scale2/block1/shortcut/weights
-    # scale3/block2/c/moving_mean
-    # scale3/block6/c/moving_variance
-    # scale4/block3/c/moving_mean
-    # scale4/block8/a/beta
-    # layer4.1.conv1.weight
-
+    # this function has been modified to fix #4
 
     post = ''
     EXP = 'voc12'
