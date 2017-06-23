@@ -107,7 +107,7 @@ def get_data_from_chunk_v2(chunk):
         gt_temp = flip(gt_temp,flip_p)
         gt[:,:,0,i] = gt_temp
         a = outS(321*scale)#41
-        b = outS(321*0.5*scale)#21
+        b = outS(321*0.5*scale+1)#21
     labels = [resize_label_batch(gt,i) for i in [a,a,b,a]]
     images = images.transpose((3,2,0,1))
     images = torch.from_numpy(images).float()
