@@ -86,7 +86,7 @@ def get_data_from_chunk_v2(chunk):
     gt_path =  args['--GTpath']
     img_path = args['--IMpath']
 
-    scale = random.uniform(0.5, 1.3) #random.uniform(0.5,1.5) does not fit in a Titan X with the present version of pytorch, so we random scaling in the range (0.5,1.3)
+    scale = random.uniform(0.5, 1.3) #random.uniform(0.5,1.5) does not fit in a Titan X with the present version of pytorch, so we random scaling in the range (0.5,1.3), different than caffe implementation in that caffe used only 4 fixed scales. Refer to read me
     dim = int(scale*321)
     images = np.zeros((dim,dim,3,len(chunk)))
     gt = np.zeros((dim,dim,1,len(chunk)))
