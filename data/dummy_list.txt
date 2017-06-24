@@ -1,0 +1,6 @@
+/data1/ravikiran/testgit/pytorch-deeplab-resnet/data/cat.h5
+/data1/ravikiran/testgit/pytorch-deeplab-resnet/data/cat.h5
+/data1/ravikiran/testgit/pytorch-deeplab-resnet/data/cat.h5
+/data1/ravikiran/testgit/pytorch-deeplab-resnet/data/cat.h5
+/data1/ravikiran/testgit/pytorch-deeplab-resnet/data/cat.h5
+/data1/ravikiran/testgit/pytorch-deeplab-resnet/data/cat.h5

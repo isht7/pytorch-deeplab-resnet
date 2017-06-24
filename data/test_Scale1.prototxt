@@ -1,44 +1,31 @@
 name: "${NET_ID}"
 
-layer {
-name: "data"
-type: "Input"
-top: "data"
-input_param { shape { dim: 1 dim: 3  dim: 321 dim: 321 } }
-}
+#layer {
+#name: "data"
+#type: "Input"
+#top: "data"
+#input_param { shape { dim: 1 dim: 3  dim: 321 dim: 321 } }
+#}
 
+#layer {
+#name: "data"
+#type: "Input"
+#top: "label"
+#input_param { shape { dim: 1 dim: 1  dim: 321 dim: 321 } }
+#}
 layer {
-name: "data"
-type: "Input"
-top: "label"
-input_param { shape { dim: 1 dim: 1  dim: 321 dim: 321 } }
-}
-
-
-### shrink data ###
-layer {
-  bottom: "data"
-  top: "data_res05"
-  name: "data_res05"
-  type: "Interp"
-  interp_param {
-    shrink_factor: 2
-    pad_beg: 0
-    pad_end: 0
+  name: "data"
+  type: "HDF5Data"
+  top: "data"
+  top: "label"
+  #top: "selector"
+  hdf5_data_param {
+        source: "/data1/ravikiran/testgit/pytorch-deeplab-resnet/data/dummy_list.txt"
+    batch_size : 1
   }
 }
-layer {
-  bottom: "data"
-  top: "data_res075"
-  name: "data_res075"
-  type: "Interp"
-  interp_param {
-    shrink_factor: 4
-    zoom_factor: 3
-    pad_beg: 0
-    pad_end: 0
-  }
-}
+
+
 
 ###################### resolution 1 #####################
 layer {

@@ -8,6 +8,7 @@ import caffe
 import numpy as np
 import skimage.io
 import torch
+import cv2
 from torch.autograd import Variable
 import torchvision.models as models
 import torch.nn.functional as F
@@ -49,9 +50,9 @@ class CaffeParamProvider():
         return b
 
 
-def preprocess(img):
+def preprocess(out):
     """Changes RGB [0,1] valued image to BGR [0,255] with mean subtracted."""
-    out = np.copy(img) * 255.0
+    #out = np.copy(img) * 255.0
     out = out[:, :, [2, 1, 0]]  # swap channel from RGB to BGR
     out[0] -= 104.008
     out[1] -= 116.669
@@ -87,16 +88,12 @@ def dist_(caffe_tensor, th_tensor):
 # returns image of shape [321, 321, 3]
 # [height, width, depth]
 def load_image(path, size=321):
-    img = skimage.io.imread(path)
-    short_edge = min(img.shape[:2])
-    yy = int((img.shape[0] - short_edge) / 2)
-    xx = int((img.shape[1] - short_edge) / 2)
-    crop_img = img[yy:yy + short_edge, xx:xx + short_edge]
-    resized_img = skimage.transform.resize(crop_img, (size, size))
+    img = cv2.imread(path)
+    resized_img = cv2.resize(img,(size,size)).astype(float)
     return resized_img
 
 
-def load_caffe(img_p, layers=50):
+def load_caffe(img_p, ):
     caffe.set_mode_cpu()
     #caffe.set_device(0)
 
@@ -212,8 +209,8 @@ def parse_pth_varnames(p, pth_varname, num_layers):
 
     raise ValueError('unhandled var ' + pth_varname)
 
-def convert(img, img_p, layers):
-    caffe_model = load_caffe(img_p, layers)
+def convert(img_p, layers):
+    caffe_model = load_caffe(img_p)
 
     param_provider = CaffeParamProvider(caffe_model)
     model = getattr(deeplab_resnet,'Res_Deeplab')()
@@ -264,7 +261,7 @@ def main():
     img_p = preprocess(img)
 
     print "CONVERTING Multi-scale DeepLab_resnet COCO init"
-    convert(img, img_p, layers = 101)
+    convert(img_p, layers = 101)
 
 
 if __name__ == '__main__':

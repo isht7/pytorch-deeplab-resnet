@@ -54,7 +54,7 @@ class CaffeParamProvider():
 def preprocess(out):
     #"""Changes RGB [0,1] valued image to BGR [0,255] with mean subtracted."""
     #out = np.copy(img) * 255.0
-    #out = out[:, :, [2, 1, 0]]  # swap channel from RGB to BGR
+    out = out[:, :, [2, 1, 0]]  # swap channel from RGB to BGR
     out[0] -= 104.008
     out[1] -= 116.669
     out[2] -= 122.675
@@ -89,18 +89,12 @@ def dist_(caffe_tensor, th_tensor):
 # returns image of shape [321, 321, 3]
 # [height, width, depth]
 def load_image(path, size=321):
-    #img = skimage.io.imread(path)
-    #short_edge = min(img.shape[:2])
-    #yy = int((img.shape[0] - short_edge) / 2)
-    #xx = int((img.shape[1] - short_edge) / 2)
     img = cv2.imread(path)
-    resized_img = cv2.resize(img,(321,321)).astype(float)
-    #crop_img = img[yy:yy + short_edge, xx:xx + short_edge]
-    #esized_img = skimage.transform.resize(crop_img, (size, size))
+    resized_img = cv2.resize(img,(size,size)).astype(float)
     return resized_img
 
 
-def load_caffe(img_p, layers=50):
+def load_caffe(img_p):
     caffe.set_mode_cpu()
     #caffe.set_device(0)
 
@@ -221,7 +215,7 @@ def checkpoint_fn(layers):
     return 'resnet%d.pth' % layers
 
 def convert(img_p, layers):
-    caffe_model = load_caffe(img_p, layers)
+    caffe_model = load_caffe(img_p)
 
     param_provider = CaffeParamProvider(caffe_model)
     model = getattr(deeplab_resnet,'Res_Deeplab')()
@@ -248,8 +242,6 @@ def convert(img_p, layers):
     model.Scale.layer1._modules['0'].conv1.register_forward_hook(hook)   #4, pool1 out 
     model.Scale.layer1._modules['1'].conv1.register_forward_hook(hook) #5, res2a out
     model.Scale.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #6, res5c out
-    #model.Scale.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #7, res5c_res075 out
-    #model.Scale.layer5.conv2d_list._modules['0'].register_forward_hook(hook) #8, res5c_res05 out
 
     model.eval()
     output = model(Variable(torch.from_numpy(img_p[np.newaxis, :].transpose(0,3,1,2)).float(),volatile=True))  
@@ -265,21 +257,10 @@ def convert(img_p, layers):
     dist_(caffe_model.blobs['pool1'].data,o[4])
     dist_(caffe_model.blobs['res2a'].data,o[5])
     dist_(caffe_model.blobs['res5c'].data,o[6])
-    #dist_(caffe_model.blobs['res5c_res075'].data,o[7])
-    #dist_(caffe_model.blobs['res5c_res05'].data,o[8])
     dist_(caffe_model.blobs['fc1_voc12'].data,output[0].data.numpy())
     dist_(caffe_model.blobs['fc1_voc12_res075_interp'].data,output[1].data.numpy())
     dist_(caffe_model.blobs['fc1_voc12_res05'].data,output[2].data.numpy())
     dist_(caffe_model.blobs['fc_fusion'].data,output[3].data.numpy())
-    dist_(caffe_model.params['fc1_voc12_res075_c0'][0].data, model.state_dict()['Scale.layer5.conv2d_list.0.weight'].cpu().numpy())
-    dist_(caffe_model.params['fc1_voc12_res075_c0'][1].data, model.state_dict()['Scale.layer5.conv2d_list.0.bias'].cpu().numpy())
-    dist_(caffe_model.params['fc1_voc12_res075_c1'][0].data, model.state_dict()['Scale.layer5.conv2d_list.1.weight'].cpu().numpy())
-    dist_(caffe_model.params['fc1_voc12_res075_c1'][1].data, model.state_dict()['Scale.layer5.conv2d_list.1.bias'].cpu().numpy())
-    dist_(caffe_model.params['fc1_voc12_res075_c2'][0].data, model.state_dict()['Scale.layer5.conv2d_list.2.weight'].cpu().numpy())
-    dist_(caffe_model.params['fc1_voc12_res075_c2'][1].data, model.state_dict()['Scale.layer5.conv2d_list.2.bias'].cpu().numpy())
-
-    dist_(caffe_model.params['fc1_voc12_res075_c3'][0].data, model.state_dict()['Scale.layer5.conv2d_list.3.weight'].cpu().numpy())
-    dist_(caffe_model.params['fc1_voc12_res075_c3'][1].data, model.state_dict()['Scale.layer5.conv2d_list.3.bias'].cpu().numpy())
 
     print 'input image shape',img_p[np.newaxis, :].transpose(0,3,1,2).shape
     print 'output shapes -'
