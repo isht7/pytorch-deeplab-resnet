@@ -213,7 +213,7 @@ def convert(img_p, layers):
     caffe_model = load_caffe(img_p)
 
     param_provider = CaffeParamProvider(caffe_model)
-    model = getattr(deeplab_resnet,'Res_Deeplab')()
+    model = deeplab_resnet.Res_Deeplab(21) 
     old_dict = model.state_dict()
     new_state_dict = OrderedDict()
     keys = model.state_dict().keys()

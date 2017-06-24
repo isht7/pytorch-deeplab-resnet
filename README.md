@@ -7,8 +7,8 @@ The older version is available [here](https://github.com/isht7/pytorch-deeplab-r
 
 **24 June 2017**
 
-Now, weights over the 3 scales ( 1x, 0.75x, 0.5x ) are shared as in the caffe implementation. Previously, each of the 3 scales had seperate weights. Results are almost same after making this change (more in the results section). However, the size of the trained .pth model has reduced significantly. Memory occupied on GPU(11.9 GB) and time taken (~3.5 hours) during training are same as before. Links to corresponding .pth files have been updated.
-
+* Now, weights over the 3 scales ( 1x, 0.75x, 0.5x ) are shared as in the caffe implementation. Previously, each of the 3 scales had seperate weights. Results are almost same after making this change (more in the results section). However, the size of the trained .pth model has reduced significantly. Memory occupied on GPU(11.9 GB) and time taken (~3.5 hours) during training are same as before. Links to corresponding .pth files have been updated.
+* Custom data can be used to train pytorch-deeplab-resnet using train.py, flag --NoLabels (total number of labels in training data) has been added to train.py and evalpyt.py for this purpose
 # Usage
 ### Replicating caffe performance
 To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run

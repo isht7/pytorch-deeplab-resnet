@@ -18,7 +18,7 @@ import torch.nn as nn
 
 from docopt import docopt
 
-docstr = """Evaluate ResNet-DeepLab trained on scenes (VOC 2012),a total of 21 labels including beackground
+docstr = """Evaluate ResNet-DeepLab trained on scenes (VOC 2012),a total of 21 labels including background
 
 Usage: 
     evalpyt.py [options]
@@ -29,6 +29,7 @@ Options:
     --snapPrefix=<str>          Snapshot [default: VOC12_scenes_]
     --testGTpath=<str>          Ground truth path prefix [default: data/gt/]
     --testIMpath=<str>          Sketch images path prefix [default: data/img/]
+    --NoLabels=<int>            The number of different labels in training data, VOC has 21 labels, including background [default: 21]
     --gpu0=<int>                GPU number [default: 0]
 """
 
@@ -42,7 +43,7 @@ def get_iou(pred,gt):
     gt = gt.astype(np.float32)
     pred = pred.astype(np.float32)
 
-    max_label = 20  # labels from 0,1, ... 20 
+    max_label = int(args['--NoLabels'])-1  # labels from 0,1, ... 20(for VOC)  
     count = np.zeros((max_label+1,))
     for j in range(max_label+1):
         x = np.where(pred==j)
@@ -66,7 +67,7 @@ def get_iou(pred,gt):
 
 gpu0 = int(args['--gpu0'])
 im_path = args['--testIMpath']
-model = getattr(deeplab_resnet,'Res_Deeplab')()
+model = deeplab_resnet.Res_Deeplab(int(args['--NoLabels']))
 model.eval()
 counter = 0
 model.cuda(gpu0)

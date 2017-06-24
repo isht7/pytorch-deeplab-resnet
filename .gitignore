@@ -1,3 +1,9 @@
++data/*.pth
++data/gt/
++data/img/
++data/snapshots/
++data/*.caffemodel
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
