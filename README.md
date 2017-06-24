@@ -2,7 +2,7 @@
 [DeepLab resnet](https://arxiv.org/abs/1606.00915) model implementation in pytorch. 
 
 The architecture of deepLab-ResNet has been replicated exactly as it is from the caffe implementation. This architecture calculates losses on input images over multiple scales ( 1x, 0.75x, 0.5x ). Losses are calculated individually over these 3 scales. In addition to these 3 losses, one more loss is calculated after merging the output score maps on the 3 scales. These 4 losses are added to calculate the total loss.
-The older version is available [here](https://github.com/isht7/pytorch-deeplab-resnet/tree/independent_wts)
+The older version is available [here](https://github.com/isht7/pytorch-deeplab-resnet/tree/independent_wts).
 ## Updates
 
 **24 June 2017**
@@ -69,4 +69,4 @@ train.py --lr 0.00025 --wtDecay 0.0005 --maxIter 20000 --GTpath <train gt images
 ## Acknowledgement
 This work was done during my time at [Video Analytics Lab](http://val.serc.iisc.ernet.in/valweb/). A big thanks to them for their GPUs.
  
-A part of the code has been borrowed from [https://github.com/ry/tensorflow-resnet](https://github.com/ry/tensorflow-resnet)
+A part of the code has been borrowed from [https://github.com/ry/tensorflow-resnet](https://github.com/ry/tensorflow-resnet).
