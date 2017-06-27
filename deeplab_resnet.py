@@ -103,11 +103,11 @@ class Bottleneck(nn.Module):
 
 class Classifier_Module(nn.Module):
 
-    def __init__(self,dilation_series,padding_series):
+    def __init__(self,dilation_series,padding_series,NoLabels):
         super(Classifier_Module, self).__init__()
 	self.conv2d_list = nn.ModuleList()
 	for dilation,padding in zip(dilation_series,padding_series):
-	    self.conv2d_list.append(nn.Conv2d(2048,21,kernel_size=3,stride=1, padding =padding, dilation = dilation,bias = True))
+	    self.conv2d_list.append(nn.Conv2d(2048,NoLabels,kernel_size=3,stride=1, padding =padding, dilation = dilation,bias = True))
 
         for m in self.conv2d_list:
             m.weight.data.normal_(0, 0.01)
@@ -122,7 +122,7 @@ class Classifier_Module(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, layers):
+    def __init__(self, block, layers,NoLabels):
         self.inplanes = 64
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
@@ -136,7 +136,7 @@ class ResNet(nn.Module):
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=1, dilation__ = 2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=1, dilation__ = 4)
-	self.layer5 = self._make_pred_layer(Classifier_Module, [6,12,18,24],[6,12,18,24])
+	self.layer5 = self._make_pred_layer(Classifier_Module, [6,12,18,24],[6,12,18,24],NoLabels)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -165,8 +165,8 @@ class ResNet(nn.Module):
             layers.append(block(self.inplanes, planes,dilation_=dilation__))
 
         return nn.Sequential(*layers)
-    def _make_pred_layer(self,block, dilation_series, padding_series):
-	return block(dilation_series,padding_series)
+    def _make_pred_layer(self,block, dilation_series, padding_series,NoLabels):
+	return block(dilation_series,padding_series,NoLabels)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -182,11 +182,11 @@ class ResNet(nn.Module):
         return x
 
 class MS_Deeplab(nn.Module):
-    def __init__(self,block):
+    def __init__(self,block,NoLabels):
 	super(MS_Deeplab,self).__init__()
-	self.Scale1 = ResNet(block,[3, 4, 23, 3])   # for original scale
-	self.Scale2 = ResNet(block,[3, 4, 23, 3])   # for 0.75x scale
-	self.Scale3 = ResNet(block,[3, 4, 23, 3])   # for 0.5x scale
+	self.Scale1 = ResNet(block,[3, 4, 23, 3],NoLabels)   # for original scale
+	self.Scale2 = ResNet(block,[3, 4, 23, 3],NoLabels)   # for 0.75x scale
+	self.Scale3 = ResNet(block,[3, 4, 23, 3],NoLabels)   # for 0.5x scale
 
     def forward(self,x):
         input_size = x.size()[2]
@@ -208,7 +208,7 @@ class MS_Deeplab(nn.Module):
 	return out
 
 
-def Res_Deeplab():
-    model = MS_Deeplab(Bottleneck)
+def Res_Deeplab(NoLabels=21):
+    model = MS_Deeplab(Bottleneck,NoLabels)
     return model
 

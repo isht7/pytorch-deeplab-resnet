@@ -4,6 +4,8 @@
 The architecture of deepLab-ResNet has been replicated exactly as it is from the caffe implementation. This architecture calculates losses on input images over multiple scales ( 1x, 0.75x, 0.5x ). Losses are calculated individually over these 3 scales. In addition to these 3 losses, one more loss is calculated after merging the output score maps on the 3 scales. These 4 losses are added to calculate the total loss.
 
 # Usage
+## Branch custom_maxLabel
+This branch differs from the master in that the number of labels can be modified in this version while training, enabling use of custom data for training. Additional flags have been provided in `train.py` and `eval.py` to enable training and evaluation with custom data. Note that this feature is now available in master.
 ### Replicating caffe performance
 To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
 ```
@@ -58,7 +60,7 @@ You can download the corresponding .pth file [here](https://drive.google.com/fil
 
 To replicate this performance, run 
 ```
-train.py --lr 0.00025 --wtDecay 0.0005 --maxIter 20000 --GTpath <train gt images path here> --IMpath <train images path here> --LISTpath data/list/train_aug.txt
+train.py --lr 0.00025 --wtDecay 0.0005 --maxIter 20000 --GTpath <train gt images path here> --IMpath <train images path here> --LISTpath data/list/train_aug.txt --NoLabels 21
 ```
 ## Acknowledgement
 This work was done during my time at [Video Analytics Lab](http://val.serc.iisc.ernet.in/valweb/). A big thanks to them for their GPUs.

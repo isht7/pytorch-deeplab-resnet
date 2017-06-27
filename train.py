@@ -24,6 +24,7 @@ Options:
     -h, --help                  Print this message
     --GTpath=<str>              Ground truth path prefix [default: data/gt/]
     --IMpath=<str>              Sketch images path prefix [default: data/img/]
+    --NoLabels=<int>            The number of different labels in training data, VOC has 21 labels, including background [default: 21]
     --LISTpath=<str>            Input image number list file [default: data/list/train_aug.txt]
     --lr=<float>                Learning Rate [default: 0.00025]
     -i, --iterSize=<int>        Num iters to accumulate gradients over [default: 10]
@@ -42,7 +43,7 @@ gpu0 = int(args['--gpu0'])
 
 def outS(i):
     """Given shape of input image as i,i,3 in deeplab-resnet model, this function
-    returns j such that the shape of output blob of is j,j,21 """
+    returns j such that the shape of output blob of is j,j,21(in case of VOC) """
     j = int(i)
     j = (j+1)/2
     j = int(np.ceil((j+1)/2.0))
@@ -192,8 +193,16 @@ if not os.path.exists('data/snapshots'):
     os.makedirs('data/snapshots')
 
 
-model = getattr(deeplab_resnet,'Res_Deeplab')()
+#model = getattr(deeplab_resnet,'Res_Deeplab')()
+model = deeplab_resnet.Res_Deeplab(int(args['--NoLabels']))
 saved_state_dict = torch.load('data/MS_DeepLab_resnet_pretrained_COCO_init.pth')
+if int(args['--NoLabels'])!=21:
+    for i in saved_state_dict:
+        #Scale3.layer5.conv2d_list.3.weight
+        i_parts = i.split('.')
+        if i_parts[1]=='layer5':
+            saved_state_dict[i] = model.state_dict()[i]
+
 model.load_state_dict(saved_state_dict)
 
 max_iter = int(args['--maxIter']) 
