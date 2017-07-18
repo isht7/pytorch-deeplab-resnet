@@ -29,13 +29,14 @@ Options:
     --snapPrefix=<str>          Snapshot [default: VOC12_scenes_]
     --testGTpath=<str>          Ground truth path prefix [default: data/gt/]
     --testIMpath=<str>          Sketch images path prefix [default: data/img/]
+    --NoLabels=<int>            The number of different labels in training data, VOC has 21 labels, including background [default: 21]
     --gpu0=<int>                GPU number [default: 0]
 """
 
 args = docopt(docstr, version='v0.1')
 print args
 
-max_label = 20  # labels from 0,1, ... 20 
+max_label = int(args['--NoLabels'])-1 # labels from 0,1, ... 20(for VOC) 
 def fast_hist(a, b, n):
     k = (a >= 0) & (a < n)
     return np.bincount(n * a[k].astype(int) + b[k], minlength=n**2).reshape(n, n)
@@ -119,4 +120,4 @@ for iter in range(1,21):   #TODO set the (different iteration)models that you wa
         pytorch_list.append(iou_pytorch)
         hist += fast_hist(gt.flatten(),output.flatten(),max_label+1)
     miou = np.diag(hist) / (hist.sum(1) + hist.sum(0) - np.diag(hist))
-    print 'pytorch',iter, np.sum(np.asarray(pytorch_list))/len(pytorch_list),"miou = ",np.sum(miou)/len(miou)
+    print 'pytorch',iter,"Mean iou = ",np.sum(miou)/len(miou)
