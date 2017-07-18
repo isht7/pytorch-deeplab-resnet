@@ -71,7 +71,7 @@ def get_iou(pred,gt):
 
 gpu0 = int(args['--gpu0'])
 im_path = args['--testIMpath']
-model = getattr(deeplab_resnet,'Res_Deeplab')()
+model = deeplab_resnet.Res_Deeplab(int(args['--NoLabels']))
 model.eval()
 counter = 0
 model.cuda(gpu0)
