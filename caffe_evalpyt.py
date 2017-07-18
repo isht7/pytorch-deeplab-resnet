@@ -79,7 +79,7 @@ for i in img_list:
     img_temp[:,:,2] = img_temp[:,:,2] - 122.675
     img[:img_temp.shape[0],:img_temp.shape[1],:] = img_temp
     gt = cv2.imread(gt_path+'/'+i[:-1]+'.png',0)
-    gt[gt==255] = 0
+    #gt[gt==255] = 0
     net.blobs['data'].data[0] = img.transpose((2, 0, 1))
     assert net.blobs['data'].data[0].shape == (3, 513, 513)
     net.forward()
