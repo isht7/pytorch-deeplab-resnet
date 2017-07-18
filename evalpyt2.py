@@ -98,7 +98,7 @@ for iter in range(1,21):   #TODO set the (different iteration)models that you wa
         img_temp[:,:,2] = img_temp[:,:,2] - 122.675
         img[:img_temp.shape[0],:img_temp.shape[1],:] = img_temp
         gt = cv2.imread(os.path.join(gt_path,i[:-1]+'.png'),0)
-        gt[gt==255] = 0
+        #gt[gt==255] = 0
 
         output = model(Variable(torch.from_numpy(img[np.newaxis, :].transpose(0,3,1,2)).float(),volatile = True).cuda(gpu0))
         interp = nn.UpsamplingBilinear2d(size=(513, 513))
