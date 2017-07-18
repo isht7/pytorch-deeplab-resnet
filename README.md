@@ -5,6 +5,9 @@ The architecture of deepLab-ResNet has been replicated exactly as it is from the
 
 ## Updates
 
+**18 July 2017**
+* One more evaluation script is added, `evalpyt2.py`. The old evaluation script `evalpyt.py` uses a different methodoloy to take mean of IOUs than the one used by [authors](https://arxiv.org/abs/1606.00915). Results section has been updated to incorporate this change.
+
 **24 June 2017**
 
 * Now, weights over the 3 scales ( 1x, 0.75x, 0.5x ) are shared as in the caffe implementation. Previously, each of the 3 scales had seperate weights. Results are almost same after making this change (more in the results section). However, the size of the trained .pth model has reduced significantly. Memory occupied on GPU(11.9 GB) and time taken (~3.5 hours) during training are same as before. Links to corresponding .pth files have been updated.
@@ -12,12 +15,12 @@ The architecture of deepLab-ResNet has been replicated exactly as it is from the
 The older version (prior to 24 June 2017) is available [here](https://github.com/isht7/pytorch-deeplab-resnet/tree/independent_wts).
 
 # Usage
-### Replicating caffe performance
+### Converting released caffemodel to pytorch model
 To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
 ```
 python convert_deeplab_resnet.py
 ```
-to generate the corresponding pytorch model file (.pth). The generated .pth snapshot file can be used to get the same test performace as offered by using the caffemodel in caffe. If you do not want to generate the .pth file yourself, you can download it [here](https://drive.google.com/open?id=0BxhUwxvLPO7TeXFNQ3YzcGI4Rjg).
+to generate the corresponding pytorch model file (.pth). The generated .pth snapshot file can be used to get the exsct same test performace as offered by using the caffemodel in caffe (as shown by numbers in results section). If you do not want to generate the .pth file yourself, you can download it [here](https://drive.google.com/open?id=0BxhUwxvLPO7TeXFNQ3YzcGI4Rjg).
 
 To run `convert_deeplab_resnet.py`, [deeplab v2 caffe](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and pytorch (python 2.7) are required.
 
@@ -61,8 +64,8 @@ To get a description of each command-line arguments, run
 python evalpyt.py -h
 ```
 ### Results
-When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 78.48% (Mean IOU is calculated for each image and these values are averaged together. This way of calculating mean IOU is different than the one used by [authors](https://arxiv.org/abs/1606.00915). The method used by [authors](https://arxiv.org/abs/1606.00915) is presently in [development](https://github.com/isht7/pytorch-deeplab-resnet/tree/development) branch [here](https://github.com/isht7/pytorch-deeplab-resnet/blob/development/evalpyt2.py) and will be moved here in some time.)
-You can download the corresponding .pth file [here](https://drive.google.com/open?id=0BxhUwxvLPO7TT0Y5UndZckIwMVE)
+When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 71.13%(`evalpyt2.py`). You can download the corresponding .pth file [here](https://drive.google.com/open?id=0BxhUwxvLPO7TT0Y5UndZckIwMVE). This is in comparision to 74.39% that is acheived by using `train_iter_20000.caffemodel` released by [authors](https://arxiv.org/abs/1606.00915), which can be replicated by running [this](https://github.com/isht7/pytorch-deeplab-resnet/blob/development/caffe_evalpyt.py) file . The `.pth` model converted from `.caffemodel` using the first section also gives 74.39% mean IOU.
+A previous version of this file reported mean IOU of 78.48% on the pytorch trained model which is caclulated in a different way(`evalpyt.py`, Mean IOU is calculated for each image and these values are averaged together. This way of calculating mean IOU is different than the one used by [authors](https://arxiv.org/abs/1606.00915)). 
 
 To replicate this performance, run 
 ```
