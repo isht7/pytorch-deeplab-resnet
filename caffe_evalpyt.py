@@ -87,5 +87,5 @@ for i in img_list:
     iou_caffe = get_iou(out_caffe,gt)      
     caffe_list.append(iou_caffe)
     hist += fast_hist(gt.flatten(),out_caffe.flatten(),max_label+1)
-    miou = np.diag(hist) / (hist.sum(1) + hist.sum(0) - np.diag(hist))
+miou = np.diag(hist) / (hist.sum(1) + hist.sum(0) - np.diag(hist))
 print 'caffe IOUs', np.sum(np.asarray(caffe_list))/len(caffe_list),"miou = ",np.sum(miou)/len(miou)
