@@ -64,8 +64,8 @@ To get a description of each command-line arguments, run
 python evalpyt.py -h
 ```
 ### Results
-When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 71.13%(`evalpyt2.py`). You can download the corresponding .pth file [here](https://drive.google.com/open?id=0BxhUwxvLPO7TT0Y5UndZckIwMVE). This is in comparision to 74.39% that is acheived by using `train_iter_20000.caffemodel` released by [authors](https://arxiv.org/abs/1606.00915), which can be replicated by running [this](https://github.com/isht7/pytorch-deeplab-resnet/blob/development/caffe_evalpyt.py) file . The `.pth` model converted from `.caffemodel` using the first section also gives 74.39% mean IOU.
-A previous version of this file reported mean IOU of 78.48% on the pytorch trained model which is caclulated in a different way(`evalpyt.py`, Mean IOU is calculated for each image and these values are averaged together. This way of calculating mean IOU is different than the one used by [authors](https://arxiv.org/abs/1606.00915)). 
+When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 71.13%(`evalpyt2.py`). The corresponding .pth file can be downloaded [here](https://drive.google.com/open?id=0BxhUwxvLPO7TT0Y5UndZckIwMVE). This is in comparision to 74.39% that is acheived by using `train_iter_20000.caffemodel` released by [authors](https://arxiv.org/abs/1606.00915), which can be replicated by running [this](https://github.com/isht7/pytorch-deeplab-resnet/blob/development/caffe_evalpyt.py) file . The `.pth` model converted from `.caffemodel` using the first section also gives 74.39% mean IOU.
+A previous version of this file reported mean IOU of 78.48% on the pytorch trained model which is caclulated in a different way (`evalpyt.py`, Mean IOU is calculated for each image and these values are averaged together. This way of calculating mean IOU is different than the one used by [authors](https://arxiv.org/abs/1606.00915)). 
 
 To replicate this performance, run 
 ```
