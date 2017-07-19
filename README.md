@@ -11,7 +11,7 @@ The architecture of deepLab-ResNet has been replicated exactly as it is from the
 **24 June 2017**
 
 * Now, weights over the 3 scales ( 1x, 0.75x, 0.5x ) are shared as in the caffe implementation. Previously, each of the 3 scales had seperate weights. Results are almost same after making this change (more in the results section). However, the size of the trained .pth model has reduced significantly. Memory occupied on GPU(11.9 GB) and time taken (~3.5 hours) during training are same as before. Links to corresponding .pth files have been updated.
-* Custom data can be used to train pytorch-deeplab-resnet using train.py, flag --NoLabels (total number of labels in training data) has been added to train.py and evalpyt.py for this purpose. **Please note that labels should be denoted by contiguous values in the ground truth images. For eg. if there are 7 (no_labels) labels, then each ground truth image must have these labels as 0,1,2,3,...6 (no_labels-1).**
+* Custom data can be used to train pytorch-deeplab-resnet using train.py, flag --NoLabels (total number of labels in training data) has been added to train.py and evalpyt.py for this purpose. **Please note that labels should be denoted by contiguous values (starting from 0) in the ground truth images. For eg. if there are 7 (no_labels) different labels, then each ground truth image must have these labels as 0,1,2,3,...6 (no_labels-1).**
 
 The older version (prior to 24 June 2017) is available [here](https://github.com/isht7/pytorch-deeplab-resnet/tree/independent_wts).
 
