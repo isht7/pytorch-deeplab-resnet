@@ -51,7 +51,7 @@ The following features have been implemented in this repository -
 * The iter\_size parameter of caffe has been implemented, effectively increasing the batch\_size to batch\_size times iter\_size
 * Random flipping and random scaling of input has been used as data augmentation. The caffe implementation uses 4 fixed scales (0.5,0.75,1,1.25,1.5) while in the pytorch implementation, for each iteration scale is randomly picked in the range - [0.5,1.3].
 * The boundary label (255 in ground truth labels) has not been ignored in the loss function in the current version, instead it has been merged with the background. The ignore\_label caffe parameter would be implemented in the future versions. Post processing using CRF has not been implemented.
-* Batchnorm parameters are kept fixed during training. Also, caffe setting `use_global_stats = True` is reproduced during training. Running mean and variance is not calculated during.
+* Batchnorm parameters are kept fixed during training. Also, caffe setting `use_global_stats = True` is reproduced during training. Running mean and variance are not calculated during training.
 
 When run on a Nvidia Titan X GPU, `train.py` occupies about 11.9 GB of memory. 
 
