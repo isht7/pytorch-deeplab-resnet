@@ -15,7 +15,7 @@ from tqdm import *
 import random
 from docopt import docopt
 import timeit
-start = timeit.timeit
+start = timeit.timeit()
 docstr = """Train ResNet-DeepLab on VOC12 (scenes) in pytorch using MSCOCO pretrained initialization 
 
 Usage: 
@@ -240,5 +240,5 @@ for iter in range(max_iter+1):
     if iter % 1000 == 0 and iter!=0:
         print 'taking snapshot ...'
         torch.save(model.state_dict(),'data/snapshots/VOC12_scenes_'+str(iter)+'.pth')
-end = timeit.timeit
+end = timeit.timeit()
 print end-start,'seconds'
