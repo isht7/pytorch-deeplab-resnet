@@ -16,6 +16,7 @@ The architecture of deepLab-ResNet has been replicated exactly as it is from the
 The older version (prior to 24 June 2017) is available [here](https://github.com/isht7/pytorch-deeplab-resnet/tree/independent_wts).
 
 # Usage
+Note that this repository has been tested with python 2.7 only.
 ### Converting released caffemodel to pytorch model
 To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915), download the deeplab-resnet caffemodel (`train_iter_20000.caffemodel`) pretrained on VOC into the data folder. After that, run
 ```
