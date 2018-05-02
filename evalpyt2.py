@@ -3,8 +3,8 @@ from scipy import ndimage
 import cv2
 import numpy as np
 import sys
-sys.path.insert(0,'/data1/ravikiran/SketchObjPartSegmentation/src/caffe-switch/caffe/python')
-import caffe
+#sys.path.insert(0,'/data1/ravikiran/SketchObjPartSegmentation/src/caffe-switch/caffe/python')
+#import caffe
 import torch
 from torch.autograd import Variable
 import torchvision.models as models
