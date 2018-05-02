@@ -76,6 +76,8 @@ train.py --lr 0.00025 --wtDecay 0.0005 --maxIter 20000 --GTpath <train gt images
 #### Dataset
 The model presented in the results section was trained using the augmented VOC train set which was released by [this paper](http://home.bharathh.info/pubs/pdfs/BharathICCV2011.pdf). You may download this augmented data directly from [here](https://drive.google.com/file/d/11Gf5e35TdIp522OnzI_83TdSJPlL7bmb/view?usp=sharing)(please request access if it is not shared with you, I will share with you).
 
+Note that this code can be used to train pytorch-deeplab-resnet model for other datasets also. 
+
 ## Acknowledgement
 This work was done during my time at [Video Analytics Lab](http://val.serc.iisc.ernet.in/valweb/). A big thanks to them for their GPUs.
  
