@@ -241,4 +241,4 @@ for iter in range(max_iter+1):
         print 'taking snapshot ...'
         torch.save(model.state_dict(),'data/snapshots/VOC12_scenes_'+str(iter)+'.pth')
 end = timeit.timeit()
-print end-start,'seconds'
+print 'time taken ', end-start
