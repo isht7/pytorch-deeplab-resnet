@@ -94,10 +94,10 @@ for iter in range(1,21):   #TODO set the (different iteration)models that you wa
         img[:img_temp.shape[0],:img_temp.shape[1],:] = img_temp
         gt = cv2.imread(os.path.join(gt_path,i[:-1]+'.png'),0)
         gt[gt==255] = 0
-
-        output = model(Variable(torch.from_numpy(img[np.newaxis, :].transpose(0,3,1,2)).float(),volatile = True).cuda(gpu0))
-        interp = nn.UpsamplingBilinear2d(size=(513, 513))
-        output = interp(output[3]).cpu().data[0].numpy()
+        with torch.no_grad():
+            output = model(Variable(torch.from_numpy(img[np.newaxis, :].transpose(0,3,1,2)).float(),volatile = True).cuda(gpu0))
+            interp = nn.UpsamplingBilinear2d(size=(513, 513))
+            output = interp(output[3]).cpu().data[0].numpy()
         output = output[:,:img_temp.shape[0],:img_temp.shape[1]]
         
         output = output.transpose(1,2,0)
