@@ -22,14 +22,14 @@ To convert the caffemodel released by [authors](https://arxiv.org/abs/1606.00915
 ```
 python convert_deeplab_resnet.py
 ```
-to generate the corresponding pytorch model file (.pth). The generated .pth snapshot file can be used to get the exsct same test performace as offered by using the caffemodel in caffe (as shown by numbers in results section). If you do not want to generate the .pth file yourself, you can download it [here](https://drive.google.com/open?id=0BxhUwxvLPO7TeXFNQ3YzcGI4Rjg).
+to generate the corresponding pytorch model file (.pth). The generated .pth snapshot file can be used to get the exsct same test performace as offered by using the caffemodel in caffe (as shown by numbers in results section). If you do not want to generate the .pth file yourself, you can download it [here](https://drive.google.com/file/d/0BxhUwxvLPO7TeXFNQ3YzcGI4Rjg/view?usp=sharing&resourcekey=0-dPyNi9NU2Eo8Qw5kIHPUNA).
 
 To run `convert_deeplab_resnet.py`, [deeplab v2 caffe](https://bitbucket.org/aquariusjay/deeplab-public-ver2) and pytorch (python 2.7) are required.
 
 If you want to train your model in pytorch, move to the next section.
 ### Training 
 Step 1: Convert `init.caffemodel` to a .pth file: `init.caffemodel` contains MS COCO trained weights. We use these weights as initilization for all but the final layer of our model. For the last layer, we use random gaussian with a standard deviation of 0.01 as the initialization.
-To convert `init.caffemodel` to a .pth file, run (or download the converted .pth [here](https://drive.google.com/open?id=0BxhUwxvLPO7TVFJQU1dwbXhHdEk))
+To convert `init.caffemodel` to a .pth file, run (or download the converted .pth [here](https://drive.google.com/file/d/0BxhUwxvLPO7TVFJQU1dwbXhHdEk/view?usp=sharing&resourcekey=0-7UxnHrm5eDCyvz2G35aKgA))
 ```
 python init_net_surgery.py
 ```
@@ -66,7 +66,7 @@ To get a description of each command-line arguments, run
 python evalpyt.py -h
 ```
 ### Results
-When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 72.40%(`evalpyt2.py`, on VOC). The corresponding .pth file can be downloaded [here](https://drive.google.com/open?id=0BxhUwxvLPO7TT0Y5UndZckIwMVE). This is in comparision to 75.54% that is acheived by using `train_iter_20000.caffemodel` released by [authors](https://arxiv.org/abs/1606.00915), which can be replicated by running [this](https://github.com/isht7/pytorch-deeplab-resnet/blob/development/caffe_evalpyt.py) file . The `.pth` model converted from `.caffemodel` using the first section also gives 75.54% mean IOU.
+When trained on VOC augmented training set (with 10582 images) using MS COCO pretrained initialization in pytorch, we get a validation performance of 72.40%(`evalpyt2.py`, on VOC). The corresponding .pth file can be downloaded [here](https://drive.google.com/file/d/0BxhUwxvLPO7TT0Y5UndZckIwMVE/view?usp=sharing&resourcekey=0-dN8LmTrIU54tOySJQpSjVg). This is in comparision to 75.54% that is acheived by using `train_iter_20000.caffemodel` released by [authors](https://arxiv.org/abs/1606.00915), which can be replicated by running [this](https://github.com/isht7/pytorch-deeplab-resnet/blob/development/caffe_evalpyt.py) file . The `.pth` model converted from `.caffemodel` using the first section also gives 75.54% mean IOU.
 A previous version of this file reported mean IOU of 78.48% on the pytorch trained model which is caclulated in a different way (`evalpyt.py`, Mean IOU is calculated for each image and these values are averaged together. This way of calculating mean IOU is different than the one used by [authors](https://arxiv.org/abs/1606.00915)). 
 
 To replicate this performance, run 
